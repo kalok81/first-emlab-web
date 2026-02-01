@@ -3,12 +3,12 @@
   "name": "first-emlab",
   "compatibility_date": "2025-01-21",
   "compatibility_flags": ["nodejs_compat"],
-  "pages_build_output_dir": ".next",
+  "pages_build_output_dir": ".vercel/output/static",
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "emlab-db",
-      "database_id": "00000000-0000-0000-0000-000000000000"
+      "database_id": "e1977da8-bdd8-439a-96ef-023093313f20"
     }
   ]
 }
