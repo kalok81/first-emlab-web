@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const runtime = "edge";
+
 export default function Home() {
   return (
     <main className="min-h-screen">

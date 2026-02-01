@@ -33,6 +33,8 @@ interface SanityCategory {
   }
 }
 
+export const runtime = "edge";
+
 export default function Works() {
   const [activeCategory, setActiveCategory] = useState('全部');
   const [dynamicWorks, setDynamicWorks] = useState<WorkItem[]>([]);

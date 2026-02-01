@@ -2,6 +2,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 
+export const runtime = "edge";
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
