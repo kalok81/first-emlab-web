@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "first-emlab",
+  "compatibility_date": "2025-01-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": ".next",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "emlab-db",
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ]
+}
