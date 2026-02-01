@@ -1,47 +1,120 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Image from 'next/image';
+import { useState } from 'react';
+
+type WorkItem = {
+  src: string;
+  category: string;
+  title: string;
+  date: string;
+};
 
 export default function Works() {
-  const categories = ["人像刺繡", "寵物系列", "植物花卉", "風景畫作"];
-  
+  const [activeCategory, setActiveCategory] = useState('全部');
+
+  const categories = [
+    { label: '全部', value: '全部' },
+    { label: '學生作品', value: 'student' },
+    { label: '刺繡包/商品', value: 'products' },
+    { label: '工作坊', value: 'workshop' },
+  ];
+
+  const works: WorkItem[] = [
+    // STUDENT
+    { src: '/images/works/student/01.jpg', category: 'student', title: '學生刺繡作品 #01', date: '2024' },
+    { src: '/images/works/student/02.jpg', category: 'student', title: '學生刺繡作品 #02', date: '2024' },
+    { src: '/images/works/student/03.jpg', category: 'student', title: '學生刺繡作品 #03', date: '2024' },
+    { src: '/images/works/student/04.jpg', category: 'student', title: '學生刺繡作品 #04', date: '2024' },
+    
+    // PRODUCTS
+    { src: '/images/works/products/01.jpg', category: 'products', title: '訂製刺繡禮物', date: '2025' },
+    { src: '/images/works/products/02.jpg', category: 'products', title: '臘腸狗刺繡扣針', date: '2024' },
+    { src: '/images/works/products/03.jpg', category: 'products', title: 'Fing尾貓刺繡', date: '2024' },
+    { src: '/images/works/products/04.jpg', category: 'products', title: '煎餃刺繡小物', date: '2024' },
+    { src: '/images/works/products/05.jpg', category: 'products', title: '狐狸刺繡扣針', date: '2024' },
+
+    // WORKSHOP
+    { src: '/images/works/workshop/01.jpg', category: 'workshop', title: '駐場刺繡紀錄', date: '2025' },
+    { src: '/images/works/workshop/02.jpg', category: 'workshop', title: '外展刺繡教學', date: '2024' },
+    { src: '/images/works/workshop/03.jpg', category: 'workshop', title: '可麗露刺繡班', date: '2024' },
+    { src: '/images/works/workshop/04.jpg', category: 'workshop', title: '私人班/團體課', date: '2024' },
+    
+    // HERO (can also be shown)
+    { src: '/images/works/hero/01.jpg', category: 'workshop', title: '基礎針法班教學', date: '2024' },
+    { src: '/images/works/hero/02.jpg', category: 'workshop', title: '品牌故事紀錄', date: '2024' },
+  ];
+
+  const filteredWorks = activeCategory === '全部' 
+    ? works 
+    : works.filter(w => w.category === activeCategory);
+
   return (
-    <main>
+    <main className="min-h-screen">
       <Header />
-      <section className="bg-accent/10 py-20 text-center">
-        <h1 className="text-4xl mb-4">作品集 Gallery</h1>
-        <p className="opacity-60">細看每一針的溫柔</p>
+      <section className="bg-accent/10 py-24 text-center">
+        <h1 className="text-4xl md:text-5xl mb-6 font-serif tracking-tight">作品集 Gallery</h1>
+        <p className="opacity-60 text-lg">每一針，都記錄著溫暖的時光</p>
       </section>
 
       <section className="py-20 max-w-6xl mx-auto px-4">
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-4 mb-16">
           {categories.map(c => (
-            <button key={c} className="px-6 py-2 rounded-full border border-accent/30 text-sm hover:bg-accent hover:text-white transition-colors">
-              {c}
+            <button 
+              key={c.value} 
+              onClick={() => setActiveCategory(c.value)}
+              className={`px-8 py-2 rounded-full border transition-all duration-300 text-sm font-medium ${
+                activeCategory === c.value 
+                ? 'bg-accent border-accent text-white shadow-lg scale-105' 
+                : 'border-accent/20 text-accent hover:border-accent hover:bg-accent/5'
+              }`}
+            >
+              {c.label}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => (
-            <div key={i} className="group">
-              <div className="aspect-[4/5] overflow-hidden mb-4 rounded-lg shadow-sm relative">
-                <Image 
-                  src={`/images/works/work-${String(i).padStart(2, '0')}.jpg`} 
-                  alt={`Work ${i}`} 
-                  width={800}
-                  height={1000}
-                  unoptimized
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        {/* Works Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {filteredWorks.map((work, i) => (
+            <div key={i} className="group animate-fadeIn" style={{ animationDelay: `${i * 100}ms` }}>
+              <div className="aspect-[4/5] overflow-hidden mb-6 rounded-2xl shadow-sm relative bg-gray-50">
+                <img 
+                  src={work.src} 
+                  alt={work.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
               </div>
-              <h3 className="font-serif text-lg mb-1">初刺作品 #{i}</h3>
-              <p className="text-sm opacity-60">2024 · 手工刺繡 · 原創設計</p>
+              <h3 className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">{work.title}</h3>
+              <div className="flex items-center gap-3 opacity-60 text-sm">
+                <span>{work.date}</span>
+                <span className="w-1 h-1 bg-current rounded-full" />
+                <span>手工刺繡</span>
+              </div>
             </div>
           ))}
         </div>
+        
+        {filteredWorks.length === 0 && (
+          <div className="text-center py-20">
+            <p className="opacity-40">此分類暫無作品</p>
+          </div>
+        )}
       </section>
       <Footer />
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.8s ease forwards;
+        }
+      `}</style>
     </main>
   );
 }

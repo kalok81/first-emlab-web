@@ -11,7 +11,7 @@ export default function Home() {
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?auto=format&fit=crop&q=80&w=2000")' }}
+          style={{ backgroundImage: 'url("/images/works/hero/01.jpg")' }}
         >
           <div className="absolute inset-0 bg-black/20" />
         </div>
@@ -53,25 +53,25 @@ export default function Home() {
               title="刺繡工作坊" 
               desc="從零開始，體驗刺繡之美" 
               href="/workshop"
-              image="https://images.unsplash.com/photo-1621508651038-f14f923b3614?auto=format&fit=crop&q=80&w=600"
+              image="/images/works/workshop/01.jpg"
             />
             <CategoryCard 
               title="作品集" 
               desc="我們最近的故事與創作" 
               href="/works"
-              image="https://images.unsplash.com/photo-1590494157134-297eb063b45f?auto=format&fit=crop&q=80&w=600"
+              image="/images/works/student/01.jpg"
             />
             <CategoryCard 
               title="材料包" 
               desc="將溫暖帶回家延續" 
               href="/kits"
-              image="https://images.unsplash.com/photo-1518331483807-f6adb0e1ad23?auto=format&fit=crop&q=80&w=600"
+              image="/images/works/products/01.jpg"
             />
             <CategoryCard 
               title="訂製服務" 
               desc="為你的故事量身打造" 
               href="/custom"
-              image="https://images.unsplash.com/photo-1621508651068-f68673f47e33?auto=format&fit=crop&q=80&w=600"
+              image="/images/works/products/02.jpg"
             />
           </div>
         </div>
@@ -82,10 +82,17 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-3xl mb-12 text-center">近期作品</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[
+              "/images/works/student/02.jpg",
+              "/images/works/products/03.jpg",
+              "/images/works/workshop/02.jpg",
+              "/images/works/student/03.jpg",
+              "/images/works/products/04.jpg",
+              "/images/works/workshop/03.jpg"
+            ].map((src, i) => (
               <div key={i} className="aspect-square bg-gray-100 overflow-hidden relative group">
                 <img 
-                  src={`https://images.unsplash.com/photo-1610484196191-f8a41753c19e?auto=format&fit=crop&q=80&w=600&sig=${i}`} 
+                  src={src} 
                   alt="Embroidery work"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
                 />
