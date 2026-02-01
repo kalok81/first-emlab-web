@@ -18,31 +18,52 @@ interface DynamicWork {
   created_at: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export default function Works() {
   const [activeCategory, setActiveCategory] = useState('全部');
   const [dynamicWorks, setDynamicWorks] = useState<WorkItem[]>([]);
+  const [dbCategories, setDbCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    const fetchDynamicWorks = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/works');
-        const data: DynamicWork[] = await res.json();
-        const formatted: WorkItem[] = data.map(item => ({
+        const [worksRes, catsRes] = await Promise.all([
+          fetch('/api/works'),
+          fetch('/api/categories')
+        ]);
+        
+        const worksData: DynamicWork[] = await worksRes.json();
+        const formatted: WorkItem[] = worksData.map(item => ({
           src: item.image_data,
           category: item.category,
           title: `作品 #${item.id}`,
           date: new Date(item.created_at).getFullYear().toString()
         }));
         setDynamicWorks(formatted);
+
+        const catsData: Category[] = await catsRes.json();
+        setDbCategories(catsData);
       } catch (e) {
-        console.error('Failed to fetch dynamic works:', e);
+        console.error('Failed to fetch data:', e);
       }
     };
 
-    fetchDynamicWorks();
+    fetchData();
   }, []);
 
-  const categories = [
+  // Map DB categories to the UI format
+  const uiCategories = [
+    { label: '全部', value: '全部' },
+    ...dbCategories.map(c => ({ label: c.name, value: c.slug }))
+  ];
+
+  // If dbCategories is empty (e.g. before migration or first run), fallback to defaults
+  const categories = uiCategories.length > 1 ? uiCategories : [
     { label: '全部', value: '全部' },
     { label: '學生作品', value: 'student' },
     { label: '刺繡包/商品', value: 'products' },
@@ -99,7 +120,7 @@ export default function Works() {
       <Header />
       <section className="bg-accent/10 py-24 text-center">
         <h1 className="text-4xl md:text-5xl mb-6 font-serif tracking-tight">作品集 Gallery</h1>
-        <p className="opacity-60 text-lg">每一針，都記錄著溫暖的時光</p>
+        <p className="opacity-60 text-lg">每一針，都記錄著溫慢的時光</p>
       </section>
 
       <section className="py-20 max-w-6xl mx-auto px-4">
