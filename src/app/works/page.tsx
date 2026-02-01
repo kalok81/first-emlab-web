@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 export default function Works() {
   const categories = ["人像刺繡", "寵物系列", "植物花卉", "風景畫作"];
@@ -22,16 +23,18 @@ export default function Works() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => (
             <div key={i} className="group">
-              <div className="aspect-[4/5] overflow-hidden mb-4 rounded-lg shadow-sm">
-                <img 
-                  src={`https://images.unsplash.com/photo-1621508651038-f14f923b3614?auto=format&fit=crop&q=80&w=800&sig=${i+10}`} 
-                  alt="Work" 
+              <div className="aspect-[4/5] overflow-hidden mb-4 rounded-lg shadow-sm relative">
+                <Image 
+                  src={`/images/works/work-${String(i).padStart(2, '0')}.jpg`} 
+                  alt={`Work ${i}`} 
+                  width={800}
+                  height={1000}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <h3 className="font-serif text-lg mb-1">精緻花卉系列 #{i}</h3>
+              <h3 className="font-serif text-lg mb-1">初刺作品 #{i}</h3>
               <p className="text-sm opacity-60">2024 · 手工刺繡 · 原創設計</p>
             </div>
           ))}
