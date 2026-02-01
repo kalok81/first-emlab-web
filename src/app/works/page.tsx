@@ -3,6 +3,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useState, useEffect } from 'react';
+import { client, urlFor } from '@/lib/sanity';
 
 type WorkItem = {
   src: string;
@@ -11,109 +12,85 @@ type WorkItem = {
   date: string;
 };
 
-interface DynamicWork {
-  id: number;
-  category: string;
-  image_data: string;
-  created_at: string;
+interface SanityWork {
+  _id: string;
+  title: string;
+  image: any;
+  category: {
+    name: string;
+    slug: {
+      current: string;
+    }
+  };
+  date: string;
 }
 
-interface Category {
-  id: number;
+interface SanityCategory {
+  _id: string;
   name: string;
-  slug: string;
+  slug: {
+    current: string;
+  }
 }
 
 export default function Works() {
   const [activeCategory, setActiveCategory] = useState('全部');
   const [dynamicWorks, setDynamicWorks] = useState<WorkItem[]>([]);
-  const [dbCategories, setDbCategories] = useState<Category[]>([]);
+  const [dbCategories, setDbCategories] = useState<{label: string, value: string}[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [worksRes, catsRes] = await Promise.all([
-          fetch('/api/works'),
-          fetch('/api/categories')
+        const [worksData, catsData] = await Promise.all([
+          client.fetch<SanityWork[]>(`*[_type == "work"]{
+            _id,
+            title,
+            image,
+            category->{
+              name,
+              slug
+            },
+            date
+          }`),
+          client.fetch<SanityCategory[]>(`*[_type == "category"]{
+            _id,
+            name,
+            slug
+          }`)
         ]);
         
-        const worksData: DynamicWork[] = await worksRes.json();
         const formatted: WorkItem[] = worksData.map(item => ({
-          src: item.image_data,
-          category: item.category,
-          title: `作品 #${item.id}`,
-          date: new Date(item.created_at).getFullYear().toString()
+          src: item.image ? urlFor(item.image).url() : '',
+          category: item.category?.slug?.current || '',
+          title: item.title,
+          date: item.date || ''
         }));
         setDynamicWorks(formatted);
 
-        const catsData: Category[] = await catsRes.json();
-        setDbCategories(catsData);
+        const cats = catsData.map(c => ({
+          label: c.name,
+          value: c.slug.current
+        }));
+        setDbCategories(cats);
       } catch (e) {
         console.error('Failed to fetch data:', e);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  // Map DB categories to the UI format
-  const uiCategories = [
+  const categories = [
     { label: '全部', value: '全部' },
-    ...dbCategories.map(c => ({ label: c.name, value: c.slug }))
+    ...dbCategories
   ];
-
-  // If dbCategories is empty (e.g. before migration or first run), fallback to defaults
-  const categories = uiCategories.length > 1 ? uiCategories : [
-    { label: '全部', value: '全部' },
-    { label: '學生作品', value: 'student' },
-    { label: '刺繡包/商品', value: 'products' },
-    { label: '工作坊', value: 'workshop' },
-  ];
-
-  const staticWorks: WorkItem[] = [
-    // STUDENT
-    { src: '/images/works/student/01.jpg', category: 'student', title: '學生刺繡作品 #01', date: '2024' },
-    { src: '/images/works/student/02.jpg', category: 'student', title: '學生刺繡作品 #02', date: '2024' },
-    { src: '/images/works/student/03.jpg', category: 'student', title: '學生刺繡作品 #03', date: '2024' },
-    { src: '/images/works/student/04.jpg', category: 'student', title: '學生刺繡作品 #04', date: '2024' },
-    { src: '/images/works/student/05.jpg', category: 'student', title: '學生刺繡作品 #05', date: '2024' },
-    { src: '/images/works/student/06.jpg', category: 'student', title: '學生刺繡作品 #06', date: '2024' },
-    { src: '/images/works/student/07.jpg', category: 'student', title: '學生刺繡作品 #07', date: '2024' },
-    { src: '/images/works/student/08.jpg', category: 'student', title: '學生刺繡作品 #08', date: '2024' },
-    { src: '/images/works/student/09.jpg', category: 'student', title: '學生刺繡作品 #09', date: '2024' },
-    
-    // PRODUCTS
-    { src: '/images/works/products/01.jpg', category: 'products', title: '訂製刺繡禮物 #01', date: '2025' },
-    { src: '/images/works/products/02.jpg', category: 'products', title: '臘腸狗刺繡扣針', date: '2024' },
-    { src: '/images/works/products/03.jpg', category: 'products', title: 'Fing尾貓刺繡', date: '2024' },
-    { src: '/images/works/products/04.jpg', category: 'products', title: '煎餃刺繡小物', date: '2024' },
-    { src: '/images/works/products/05.jpg', category: 'products', title: '狐狸刺繡扣針', date: '2024' },
-    { src: '/images/works/products/06.jpg', category: 'products', title: '訂製刺繡禮物 #02', date: '2025' },
-    { src: '/images/works/products/07.jpg', category: 'products', title: '訂製刺繡禮物 #03', date: '2025' },
-    { src: '/images/works/products/08.jpg', category: 'products', title: '訂製刺繡禮物 #04', date: '2025' },
-    { src: '/images/works/products/09.jpg', category: 'products', title: '訂製刺繡禮物 #05', date: '2025' },
-
-    // WORKSHOP
-    { src: '/images/works/workshop/01.jpg', category: 'workshop', title: '駐場刺繡紀錄 #01', date: '2025' },
-    { src: '/images/works/workshop/02.jpg', category: 'workshop', title: '外展刺繡教學', date: '2024' },
-    { src: '/images/works/workshop/03.jpg', category: 'workshop', title: '可麗露刺繡班', date: '2024' },
-    { src: '/images/works/workshop/04.jpg', category: 'workshop', title: '私人班/團體課', date: '2024' },
-    { src: '/images/works/workshop/05.jpg', category: 'workshop', title: '刺繡手作體驗 #01', date: '2024' },
-    { src: '/images/works/workshop/06.jpg', category: 'workshop', title: '刺繡手作體驗 #02', date: '2024' },
-    { src: '/images/works/workshop/07.jpg', category: 'workshop', title: '刺繡手作體驗 #03', date: '2024' },
-    { src: '/images/works/workshop/08.jpg', category: 'workshop', title: '刺繡手作體驗 #04', date: '2024' },
-    { src: '/images/works/workshop/09.jpg', category: 'workshop', title: '刺繡手作體驗 #05', date: '2024' },
-    
-    // HERO (can also be shown)
-    { src: '/images/works/hero/01.jpg', category: 'workshop', title: '基礎針法班教學', date: '2024' },
-    { src: '/images/works/hero/02.jpg', category: 'workshop', title: '品牌故事紀錄', date: '2024' },
-  ];
-
-  const allWorks = [...dynamicWorks, ...staticWorks];
 
   const filteredWorks = activeCategory === '全部' 
-    ? allWorks 
-    : allWorks.filter(w => w.category === activeCategory);
+    ? dynamicWorks 
+    : dynamicWorks.filter(w => w.category === activeCategory);
 
   return (
     <main className="min-h-screen">
@@ -141,32 +118,43 @@ export default function Works() {
           ))}
         </div>
 
-        {/* Works Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {filteredWorks.map((work, i) => (
-            <div key={i} className="group animate-fadeIn" style={{ animationDelay: `${i * 100}ms` }}>
-              <div className="aspect-[4/5] overflow-hidden mb-6 rounded-2xl shadow-sm relative bg-gray-50">
-                <img 
-                  src={work.src} 
-                  alt={work.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
-              </div>
-              <h3 className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">{work.title}</h3>
-              <div className="flex items-center gap-3 opacity-60 text-sm">
-                <span>{work.date}</span>
-                <span className="w-1 h-1 bg-current rounded-full" />
-                <span>手工刺繡</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        {filteredWorks.length === 0 && (
+        {loading ? (
           <div className="text-center py-20">
-            <p className="opacity-40">此分類暫無作品</p>
+             <div className="inline-block w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+             <p className="mt-4 opacity-40">載入中...</p>
           </div>
+        ) : (
+          <>
+            {/* Works Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              {filteredWorks.map((work, i) => (
+                <div key={i} className="group animate-fadeIn" style={{ animationDelay: `${i * 100}ms` }}>
+                  <div className="aspect-[4/5] overflow-hidden mb-6 rounded-2xl shadow-sm relative bg-gray-50">
+                    {work.src && (
+                      <img 
+                        src={work.src} 
+                        alt={work.title} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">{work.title}</h3>
+                  <div className="flex items-center gap-3 opacity-60 text-sm">
+                    <span>{work.date}</span>
+                    <span className="w-1 h-1 bg-current rounded-full" />
+                    <span>手工刺繡</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {filteredWorks.length === 0 && (
+              <div className="text-center py-20">
+                <p className="opacity-40">此分類暫無作品</p>
+              </div>
+            )}
+          </>
         )}
       </section>
       <Footer />
