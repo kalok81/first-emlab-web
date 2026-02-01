@@ -31,6 +31,7 @@ export default function Works() {
                   alt={`Work ${i}`} 
                   width={800}
                   height={1000}
+                  unoptimized
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
