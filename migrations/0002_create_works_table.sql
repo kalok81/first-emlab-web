@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS works (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT,
+    image_data TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

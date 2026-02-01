@@ -9,7 +9,7 @@ export default function Workshop() {
       duration: "3小時",
       price: "HK$480",
       desc: "適合完全零基礎，學習8種基礎針法，完成一個精美杯墊。",
-      image: "https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?auto=format&fit=crop&q=80&w=800"
+      image: "/images/works/workshop/01.jpg"
     },
     {
       title: "寵物半身像工作坊",
@@ -17,7 +17,7 @@ export default function Workshop() {
       duration: "兩堂 (每堂3小時)",
       price: "HK$1,200",
       desc: "學習立體刺繡技巧，刻畫毛孩的神韻。",
-      image: "https://images.unsplash.com/photo-1621508651038-f14f923b3614?auto=format&fit=crop&q=80&w=800"
+      image: "/images/works/workshop/02.jpg"
     },
     {
       title: "字母花環工作坊",
@@ -25,7 +25,7 @@ export default function Workshop() {
       duration: "3.5小時",
       price: "HK$550",
       desc: "結合文字與花草，送給自己或親友的最佳禮物。",
-      image: "https://images.unsplash.com/photo-1518331483807-f6adb0e1ad23?auto=format&fit=crop&q=80&w=800"
+      image: "/images/works/workshop/03.jpg"
     }
   ];
 
