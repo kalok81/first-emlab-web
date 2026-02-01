@@ -3,7 +3,7 @@
   "name": "first-emlab",
   "compatibility_date": "2025-01-21",
   "compatibility_flags": ["nodejs_compat"],
-  "pages_build_output_dir": ".vercel/output/static",
+  "pages_build_output_dir": "out",
   "d1_databases": [
     {
       "binding": "DB",

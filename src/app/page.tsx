@@ -3,8 +3,6 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export const runtime = "edge";
-
 export default function Home() {
   return (
     <main className="min-h-screen">
@@ -25,7 +23,7 @@ export default function Home() {
             學會刺繡，也學會過溫暖的日子
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed">
-            在大忙的世界裡，找回指尖上的安靜時光 (Final Fix Attempt)
+            在大忙的世界裡，找回指尖上的安靜時光 (Static Export Fix)
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link href="/workshop" className="bg-white text-foreground px-8 py-3 rounded-full font-medium hover:bg-accent hover:text-white transition-all shadow-xl">
