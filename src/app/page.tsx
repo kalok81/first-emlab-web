@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -9,12 +10,14 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
-          style={{ backgroundImage: 'url("/images/works/hero/01.jpg")' }}
-        >
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
+        <Image 
+          src="/images/works/hero/01.jpg"
+          alt="初見刺繡 - 學會刺繡，也學會過溫暖的日子"
+          fill
+          className="object-cover transition-transform duration-1000 hover:scale-105"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/20" />
         <div className="relative text-center text-white p-6">
           <h1 className="text-4xl md:text-6xl mb-6 tracking-widest drop-shadow-lg">
             學會刺繡，也學會過溫暖的日子
