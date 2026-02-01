@@ -12,7 +12,7 @@ export default function Home() {
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <Image 
           src="/images/works/hero/01.jpg"
-          alt="初見刺繡 - 學會刺繡，也學會過溫暖的日子"
+          alt="初刺刺繡 - 學會刺繡，也學會過溫暖的日子"
           fill
           className="object-cover transition-transform duration-1000 hover:scale-105"
           priority
@@ -39,9 +39,9 @@ export default function Home() {
       {/* About Section */}
       <section className="py-24 max-w-3xl mx-auto px-4 text-center">
         <span className="text-accent uppercase tracking-widest text-sm font-bold mb-4 block">Our Story</span>
-        <h2 className="text-3xl mb-8">關於初見</h2>
+        <h2 className="text-3xl mb-8">關於初刺</h2>
         <p className="text-lg leading-loose opacity-80 mb-6">
-          「初見」位於觀塘興業街的一個溫馨角落。我們相信刺繡不只是一種手工藝，更是一種心靈的療癒。每一針每一線，都是對美好生活的細膩刻畫。
+          「初刺」位於觀塘興業街的一個溫馨角落。我們相信刺繡不只是一種手工藝，更是一種心靈的療癒。每一針每一線，都是對美好生活的細膩刻畫。
         </p>
         <p className="text-lg leading-loose opacity-80">
           在這裡，你不需要任何基礎，只需要帶著一顆想要安靜下來的心。讓我們一起在繽紛的絲線中，編織出屬於自己的溫度。

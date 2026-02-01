@@ -11,7 +11,7 @@ export default function AboutPage() {
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <Image 
           src="/images/works/hero/01.jpg"
-          alt="First Embroidery 初見"
+          alt="First Embroidery 初刺"
           fill
           className="object-cover"
           priority
@@ -19,7 +19,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative text-center text-white p-6">
           <h1 className="text-4xl md:text-5xl mb-4 tracking-widest font-serif">
-            關於初見 & 初刺
+            關於初刺
           </h1>
           <div className="w-12 h-1 bg-white/50 mx-auto" />
         </div>
@@ -59,7 +59,7 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-3xl mb-12 font-serif">以刺繡，點綴日常</h2>
           <div className="space-y-8 text-xl leading-relaxed opacity-90 font-light">
-            <p>「初見」位於香港觀塘的一個溫馨角落。我們相信每一件作品都從一個故事開始。</p>
+            <p>「初刺」位於香港觀塘的一個溫馨角落。我們相信每一件作品都從一個故事開始。</p>
             <p>無論是想記錄重要時刻、保留寵物回憶，或為品牌客製獨特禮物，「初刺」都可以將你的想法轉化成精緻的刺繡作品。</p>
             <p>未來，我們希望持續以刺繡為媒介，連結更多社群與文化項目，讓手工藝術在城市中延伸出新的溫度與故事。</p>
           </div>
