@@ -47,6 +47,8 @@ export default function AdminPage() {
     header_button_text: '',
     hero_title: '', 
     about_bio: '', 
+    founder_bio: '',
+    founder_image: '',
     footer_text: '',
     footer_address: '',
     footer_phone: '',
@@ -343,7 +345,7 @@ export default function AdminPage() {
       setWsFormData(prev => ({ ...prev, image_url: url }));
     } else if (target === 'product') {
       setProductFormData(prev => ({ ...prev, image_url: url }));
-    } else if (target.startsWith('card_image_') || target.startsWith('featured_img_')) {
+    } else {
       setSiteContent((prev: any) => ({ ...prev, [target]: url }));
     }
     
@@ -814,16 +816,48 @@ export default function AdminPage() {
                 </div>
                 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">About Section</h3>
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">About & Founder Section</h3>
                   <div className="space-y-3">
-                    <Label>關於工作室 (About Bio)</Label>
+                    <Label>品牌故事 (Brand Story / About Bio)</Label>
                     <textarea 
-                      rows={8}
+                      rows={6}
                       value={siteContent.about_bio || ''} 
                       onChange={(e) => setSiteContent({...siteContent, about_bio: e.target.value})}
                       className="w-full p-4 bg-white/40 backdrop-blur-sm border border-secondary/30 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-primary leading-relaxed"
-                      placeholder="寫下工作室的故事..."
+                      placeholder="顯示於首頁的品牌介紹..."
                     />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Label>創辦人介紹 (Founder Bio)</Label>
+                    <textarea 
+                      rows={6}
+                      value={siteContent.founder_bio || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, founder_bio: e.target.value})}
+                      className="w-full p-4 bg-white/40 backdrop-blur-sm border border-secondary/30 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-primary leading-relaxed"
+                      placeholder="顯示於關於頁的創辦人介紹..."
+                    />
+                  </div>
+
+                  <div className="space-y-3 bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
+                    <Label>創辦人照片 (Founder Image)</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        type="text" 
+                        value={siteContent.founder_image || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, founder_image: e.target.value})}
+                        placeholder="圖片網址"
+                        className="flex-grow"
+                      />
+                      <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: 'founder_image' })} className="px-4">
+                        <ImageIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    {siteContent.founder_image && (
+                      <div className="mt-2 w-32 h-40 rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                        <img src={siteContent.founder_image} alt="Founder" className="w-full h-full object-cover" />
+                      </div>
+                    )}
                   </div>
                 </div>
                 

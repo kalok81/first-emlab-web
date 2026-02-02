@@ -50,8 +50,8 @@ export default function AboutPage() {
               <h2 className="text-5xl font-serif text-primary leading-tight">羅家寶<br />KAME LAW</h2>
             </div>
             <div className="space-y-8 text-xl leading-[2] text-primary/70 font-light whitespace-pre-wrap italic">
-              {content.about_bio ? (
-                <p>{content.about_bio}</p>
+              {content.founder_bio ? (
+                <p>{content.founder_bio}</p>
               ) : (
                 <>
                   <p>
@@ -69,7 +69,7 @@ export default function AboutPage() {
           </div>
           <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-japanese animate-fade-up stagger-2">
             <Image 
-              src="/images/works/workshop/01.jpg"
+              src={content.founder_image || "/images/works/workshop/01.jpg"}
               alt="Kame Law - Founder of First Embroidery"
               fill
               className="object-cover transition-transform duration-1000 hover:scale-105" unoptimized
