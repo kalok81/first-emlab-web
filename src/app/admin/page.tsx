@@ -99,7 +99,7 @@ export default function AdminPage() {
   };
 
   const fetchContent = async () => {
-    const res = await fetch('/api/content');
+    const res = await fetch(`/api/content?t=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
     if (data && !data.error) setSiteContent((prev: any) => ({ ...prev, ...data }));
   };

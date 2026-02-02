@@ -26,10 +26,12 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    console.log('Received content update body:', body);
     const items = body as Record<string, string>;
 
     const db = getRequestContext().env.DB;
     
+    console.log('Preparing batch update for keys:', Object.keys(items));
     // Batch update
     const statements = Object.entries(items).map(([key, value]) => {
       return db.prepare('INSERT INTO site_content (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP')
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
     });
 
     await db.batch(statements);
+    console.log('Batch update successful');
 
     return Response.json({ success: true });
   } catch (error: any) {

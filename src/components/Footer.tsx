@@ -13,10 +13,13 @@ export default function Footer() {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const res = await fetch('/api/content', { cache: 'no-store' });
+        const res = await fetch(`/api/content?t=${Date.now()}`, { 
+          cache: 'no-store',
+          next: { revalidate: 0 } as any
+        });
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
-        
+        console.log('Fetched footer content:', data);
         if (data.footer_address !== null && data.footer_address !== undefined) setAddress(data.footer_address);
         if (data.footer_phone !== null && data.footer_phone !== undefined) setPhone(data.footer_phone);
         if (data.footer_email !== null && data.footer_email !== undefined) setEmail(data.footer_email);
