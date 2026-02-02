@@ -3,13 +3,28 @@
 import { useState, useEffect } from 'react';
 
 export default function Footer() {
-  const [content, setContent] = useState<any>({});
+  const [address, setAddress] = useState('觀塘興業街');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [footerText, setFooterText] = useState(`© ${new Date().getFullYear()} First Embroidery 初刺. All rights reserved.`);
 
   useEffect(() => {
-    fetch('/api/content')
-      .then(res => res.json())
-      .then(data => setContent(data))
-      .catch(err => console.error('Failed to fetch footer content', err));
+    const fetchContent = async () => {
+      try {
+        const res = await fetch('/api/content', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Fetch failed');
+        const data = await res.json();
+        
+        if (data.footer_address) setAddress(data.footer_address);
+        if (data.footer_phone) setPhone(data.footer_phone);
+        if (data.footer_email) setEmail(data.footer_email);
+        if (data.footer_text) setFooterText(data.footer_text);
+      } catch (err) {
+        console.error('Failed to fetch footer content', err);
+      }
+    };
+
+    fetchContent();
   }, []);
 
   return (
@@ -19,7 +34,7 @@ export default function Footer() {
           <h3 className="text-xl font-serif mb-4">First Embroidery 初刺</h3>
           <p className="text-sm opacity-80 leading-relaxed">
             學會刺繡，也學會過溫暖的日子。<br />
-            {content.footer_address ? `工作室地點：${content.footer_address}` : '工作室地點：觀塘興業街'}
+            工作室地點：{address}
           </p>
         </div>
         <div>
@@ -37,18 +52,18 @@ export default function Footer() {
             <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">Instagram</a></li>
             <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer">Facebook</a></li>
             <li>
-              {content.footer_phone ? (
-                <a href={`https://wa.me/${content.footer_phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
-                  WhatsApp: {content.footer_phone}
+              {phone ? (
+                <a href={`https://wa.me/${phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                  WhatsApp: {phone}
                 </a>
               ) : (
                 'WhatsApp'
               )}
             </li>
             <li>
-              {content.footer_email ? (
-                <a href={`mailto:${content.footer_email}`}>
-                  Email: {content.footer_email}
+              {email ? (
+                <a href={`mailto:${email}`}>
+                  Email: {email}
                 </a>
               ) : (
                 'Email'
@@ -58,7 +73,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="max-w-5xl mx-auto px-4 mt-12 pt-8 border-t border-background/10 text-center text-xs opacity-50">
-        {content.footer_text || `© ${new Date().getFullYear()} First Embroidery 初刺. All rights reserved.`}
+        {footerText}
       </div>
     </footer>
   );
