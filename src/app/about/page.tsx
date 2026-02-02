@@ -29,7 +29,7 @@ export default function AboutPage() {
           alt="First Embroidery 初刺"
           fill
           className="object-cover opacity-80"
-          priority
+          priority unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/40 to-background" />
         <div className="relative text-center p-12 glass-card rounded-3xl animate-fade-up">
@@ -72,7 +72,7 @@ export default function AboutPage() {
               src="/images/works/workshop/01.jpg"
               alt="Kame Law - Founder of First Embroidery"
               fill
-              className="object-cover transition-transform duration-1000 hover:scale-105"
+              className="object-cover transition-transform duration-1000 hover:scale-105" unoptimized
             />
           </div>
         </div>

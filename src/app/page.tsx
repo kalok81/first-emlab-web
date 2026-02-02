@@ -29,7 +29,7 @@ export default function Home() {
           alt="初刺刺繡 - 學會刺繡，也學會過溫暖的日子"
           fill
           className="object-cover opacity-90 scale-105"
-          priority
+          priority unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
         
@@ -148,9 +148,12 @@ export default function Home() {
               { src: content.featured_img_5 || "/images/works/products/04.jpg", span: "" }
             ].map((item, i) => (
               <div key={i} className={`group overflow-hidden relative rounded-xl shadow-sm ${item.span}`}>
-                <img 
+                <Image 
                   src={item.src} 
                   alt="Embroidery work"
+                  width={600}
+                  height={800}
+                  unoptimized
                   className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
@@ -177,7 +180,7 @@ export default function Home() {
 function CategoryCard({ title, desc, href, image, index }: { title: string, desc: string, href: string, image: string, index: number }) {
   return (
     <Link href={href} className={`group relative block aspect-[3/4.5] overflow-hidden rounded-2xl shadow-japanese transition-all hover:-translate-y-3 animate-fade-up stagger-${index}`}>
-      <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+      <Image src={image} alt={title} fill unoptimized className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
       <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
       <div className="absolute inset-0 p-8 flex flex-col justify-end">
         <h3 className="text-2xl mb-3 font-serif text-white tracking-wide">{title}</h3>
