@@ -326,33 +326,37 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen pb-20 selection:bg-secondary/30">
+    <div className="min-h-screen pb-20 selection:bg-secondary/30 bg-surface relative overflow-hidden">
+      {/* Background Decorations */}
+      <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
       {/* Header */}
       <header className="sticky top-0 z-50 px-4 py-6">
         <div className="max-w-7xl mx-auto">
-          <Card className="!p-4 flex justify-between items-center bg-white/60">
+          <Card className="!p-4 flex justify-between items-center bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl">
             <div className="flex items-center gap-3 ml-4">
-              <div className="bg-primary p-2 rounded-lg shadow-inner">
+              <div className="bg-primary p-2 rounded-xl shadow-lg rotate-3">
                 <Settings className="text-secondary w-5 h-5" />
               </div>
               <div>
                 <span className="font-bold text-lg text-primary tracking-tight block leading-none">EM Lab</span>
-                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Studio Manager</span>
+                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin Pro Max</span>
               </div>
             </div>
 
             <div className="flex-1 flex justify-center px-2">
-              <nav className="flex items-center justify-center gap-1 sm:gap-2 bg-primary/5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl flex-wrap">
+              <nav className="flex items-center justify-center gap-1 sm:gap-2 bg-primary/5 p-1.5 rounded-2xl flex-wrap backdrop-blur-sm border border-primary/5">
                 {[
                   { id: 'portfolio', label: '作品集', icon: LayoutDashboard },
                   { id: 'workshops', label: '課程管理', icon: BookOpen },
-                  { id: 'kits', label: '材料包', icon: Heart },
+                  { id: 'kits', label: '材料包 (Kits)', icon: Heart },
                   { id: 'content', label: '頁面內容', icon: Settings },
                 ].map((tab) => (
                   <button 
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`whitespace-nowrap px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-all flex items-center gap-2 flex-shrink-0 ${activeTab === tab.id ? 'bg-primary text-white shadow-lg' : 'text-primary/50 hover:text-primary hover:bg-white/50'}`}
+                    className={`whitespace-nowrap px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 flex items-center gap-2 flex-shrink-0 ${activeTab === tab.id ? 'bg-primary text-white shadow-xl scale-105' : 'text-primary/50 hover:text-primary hover:bg-white/50'}`}
                   >
                     <tab.icon className="w-3.5 h-3.5 sm:w-4 h-4" /> 
                     <span className="inline">{tab.label}</span>
@@ -363,7 +367,7 @@ export default function AdminPage() {
 
             <button 
               onClick={() => setIsLoggedIn(false)}
-              className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-highlight flex items-center gap-2 transition-colors mr-2"
+              className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-highlight flex items-center gap-2 transition-all hover:scale-105 active:scale-95 mr-2"
             >
               <LogOut className="w-4 h-4" /> 
               <span className="hidden md:inline">安全登出</span>
@@ -587,82 +591,93 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'content' && (
-          <div className="max-w-3xl mx-auto space-y-10">
-            <div>
-              <h2 className="text-3xl font-bold text-primary tracking-tight">網站靜態內容</h2>
-              <p className="text-primary/40 text-sm font-medium mt-1">更新工作室的首頁文字與介紹</p>
+          <div className="max-w-4xl mx-auto space-y-10">
+            <div className="flex justify-between items-end">
+              <div>
+                <h2 className="text-3xl font-bold text-primary tracking-tight">Edit Content (頁面內容)</h2>
+                <p className="text-primary/40 text-sm font-medium mt-1">更新工作室的首頁文字、關於我與頁尾資訊</p>
+              </div>
             </div>
             
-            <Card className="p-10">
+            <Card className="p-10 border border-white/40 shadow-2xl">
               <form onSubmit={handleContentSubmit} className="space-y-10">
-                <div className="space-y-3">
-                  <Label>首頁標語 (Hero Title)</Label>
-                  <Input 
-                    type="text" 
-                    value={siteContent.hero_title || ''} 
-                    onChange={(e) => setSiteContent({...siteContent, hero_title: e.target.value})}
-                    placeholder="例如：紀錄生活中的每一份細膩"
-                  />
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Hero Section</h3>
+                  <div className="space-y-3">
+                    <Label>首頁標語 (Hero Title)</Label>
+                    <Input 
+                      type="text" 
+                      value={siteContent.hero_title || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, hero_title: e.target.value})}
+                      placeholder="例如：紀錄生活中的每一份細膩"
+                    />
+                  </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <Label>關於工作室 (About Bio)</Label>
-                  <textarea 
-                    rows={8}
-                    value={siteContent.about_bio || ''} 
-                    onChange={(e) => setSiteContent({...siteContent, about_bio: e.target.value})}
-                    className="w-full p-4 bg-white/50 border border-secondary/30 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-primary leading-relaxed"
-                    placeholder="寫下工作室的故事..."
-                  />
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">About Section</h3>
+                  <div className="space-y-3">
+                    <Label>關於工作室 (About Bio)</Label>
+                    <textarea 
+                      rows={8}
+                      value={siteContent.about_bio || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, about_bio: e.target.value})}
+                      className="w-full p-4 bg-white/40 backdrop-blur-sm border border-secondary/30 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-primary leading-relaxed"
+                      placeholder="寫下工作室的故事..."
+                    />
+                  </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <Label>頁尾資訊 (Footer Text)</Label>
-                  <Input 
-                    type="text" 
-                    value={siteContent.footer_text || ''} 
-                    onChange={(e) => setSiteContent({...siteContent, footer_text: e.target.value})}
-                    placeholder="例如：© 2024 EM Lab. All rights reserved."
-                  />
-                </div>
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Footer Section (頁尾資訊)</h3>
+                  <div className="space-y-3">
+                    <Label>頁尾版權文字 (Footer Text)</Label>
+                    <Input 
+                      type="text" 
+                      value={siteContent.footer_text || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, footer_text: e.target.value})}
+                      placeholder="例如：© 2024 EM Lab. All rights reserved."
+                    />
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-3">
-                    <Label>工作室地址</Label>
-                    <Input 
-                      type="text" 
-                      value={siteContent.footer_address || ''} 
-                      onChange={(e) => setSiteContent({...siteContent, footer_address: e.target.value})}
-                      placeholder="工作室地址"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <Label>聯絡電話</Label>
-                    <Input 
-                      type="text" 
-                      value={siteContent.footer_phone || ''} 
-                      onChange={(e) => setSiteContent({...siteContent, footer_phone: e.target.value})}
-                      placeholder="聯絡電話"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <Label>聯絡 Email</Label>
-                    <Input 
-                      type="email" 
-                      value={siteContent.footer_email || ''} 
-                      onChange={(e) => setSiteContent({...siteContent, footer_email: e.target.value})}
-                      placeholder="聯絡 Email"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-3">
+                      <Label>工作室地址 (Address)</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.footer_address || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, footer_address: e.target.value})}
+                        placeholder="工作室地址"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>聯絡電話 (Phone)</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.footer_phone || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, footer_phone: e.target.value})}
+                        placeholder="聯絡電話"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>聯絡 Email</Label>
+                      <Input 
+                        type="email" 
+                        value={siteContent.footer_email || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, footer_email: e.target.value})}
+                        placeholder="聯絡 Email"
+                      />
+                    </div>
                   </div>
                 </div>
                 
                 <Button 
                   type="submit" 
                   isLoading={isSavingContent}
-                  className="w-full"
+                  className="w-full shadow-primary/40"
                   size="lg"
                 >
-                  確認更新內容
+                  確認更新全站內容
                 </Button>
               </form>
             </Card>
