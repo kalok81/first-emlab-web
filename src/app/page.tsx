@@ -1,9 +1,21 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [content, setContent] = useState<any>({});
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data))
+      .catch(err => console.error('Failed to fetch content', err));
+  }, []);
+
   return (
     <main className="min-h-screen">
       <Header />
@@ -20,10 +32,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative text-center text-white p-6">
           <h1 className="text-4xl md:text-6xl mb-6 tracking-widest drop-shadow-lg">
-            學會刺繡，也學會過溫暖的日子
+            {content.hero_title || '學會刺繡，也學會過溫暖的日子'}
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed">
-            在大忙的世界裡，找回指尖上的安靜時光 (Static Export Fix)
+            在大忙的世界裡，找回指尖上的安靜時光
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link href="/workshop" className="bg-white text-foreground px-8 py-3 rounded-full font-medium hover:bg-accent hover:text-white transition-all shadow-xl">
@@ -40,12 +52,20 @@ export default function Home() {
       <section className="py-24 max-w-3xl mx-auto px-4 text-center">
         <span className="text-accent uppercase tracking-widest text-sm font-bold mb-4 block">Our Story</span>
         <h2 className="text-3xl mb-8">關於初刺</h2>
-        <p className="text-lg leading-loose opacity-80 mb-6">
-          「初刺」位於觀塘興業街的一個溫馨角落。我們相信刺繡不只是一種手工藝，更是一種心靈的療癒。每一針每一線，都是對美好生活的細膩刻畫。
-        </p>
-        <p className="text-lg leading-loose opacity-80">
-          在這裡，你不需要任何基礎，只需要帶著一顆想要安靜下來的心。讓我們一起在繽紛的絲線中，編織出屬於自己的溫度。
-        </p>
+        <div className="space-y-6 text-lg leading-loose opacity-80 whitespace-pre-wrap">
+          {content.about_bio ? (
+            <p>{content.about_bio}</p>
+          ) : (
+            <>
+              <p>
+                「初刺」位於觀塘興業街的一個溫馨角落。我們相信刺繡不只是一種手工藝，更是一種心靈的療癒。每一針每一線，都是對美好生活的細膩刻畫。
+              </p>
+              <p>
+                在這裡，你不需要任何基礎，只需要帶著一顆想要安靜下來的心。讓我們一起在繽紛的絲線中，編織出屬於自己的溫度。
+              </p>
+            </>
+          )}
+        </div>
       </section>
 
       {/* Categories Grid (Link-in-Bio style) */}

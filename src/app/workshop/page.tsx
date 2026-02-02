@@ -5,42 +5,29 @@ export const runtime = "edge";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useState, useEffect } from 'react';
-import { client, urlFor } from '@/lib/sanity';
 
-interface SanityWorkshop {
-  _id: string;
+interface WorkshopData {
+  id: number;
   title: string;
-  type: 'course' | 'service';
-  level?: string;
-  duration?: string;
-  price?: string;
   description: string;
-  image?: any;
-  example?: string;
+  price: string;
+  duration: string;
+  image_url: string;
+  form_url: string;
 }
 
 export default function Workshop() {
-  const [courses, setCourses] = useState<SanityWorkshop[]>([]);
-  const [services, setServices] = useState<SanityWorkshop[]>([]);
+  const [workshops, setWorkshops] = useState<WorkshopData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await client.fetch<SanityWorkshop[]>(`*[_type == "workshop"]{
-          _id,
-          title,
-          type,
-          level,
-          duration,
-          price,
-          description,
-          image,
-          example
-        }`);
-        
-        setCourses(data.filter(item => item.type === 'course'));
-        setServices(data.filter(item => item.type === 'service'));
+        const res = await fetch('/api/workshops');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setWorkshops(data);
+        }
       } catch (e) {
         console.error('Failed to fetch workshop data:', e);
       } finally {
@@ -56,8 +43,8 @@ export default function Workshop() {
       <Header />
       
       <section className="bg-secondary text-white py-24 text-center">
-        <h1 className="text-4xl md:text-5xl mb-6 font-serif">刺繡工作坊 & 服務</h1>
-        <p className="text-xl opacity-80 max-w-2xl mx-auto px-6">在紛擾的城市中，找尋指尖的寧靜。我們提供從個人學習到品牌合作的多元化刺繡體驗。</p>
+        <h1 className="text-4xl md:text-5xl mb-6 font-serif">刺繡工作坊 & 課程</h1>
+        <p className="text-xl opacity-80 max-w-2xl mx-auto px-6">在紛擾的城市中，找尋指尖的寧靜。我們提供多元化刺繡體驗。</p>
       </section>
 
       {loading ? (
@@ -66,71 +53,62 @@ export default function Workshop() {
           <p className="mt-4 opacity-40">載入中...</p>
         </div>
       ) : (
-        <>
-          {/* Course List */}
-          {courses.length > 0 && (
-            <section className="py-24 max-w-5xl mx-auto px-6">
-              <h2 className="text-3xl font-serif mb-16 text-center">個人工作坊</h2>
-              <div className="space-y-24">
-                {courses.map((c, i) => (
-                  <div key={c._id} className={`flex flex-col md:flex-row gap-12 items-center ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
-                    <div className="flex-1">
-                      <div className="aspect-[4/3] overflow-hidden rounded-2xl shadow-xl bg-gray-50">
-                        {c.image && (
-                          <img src={urlFor(c.image).url()} alt={c.title} className="w-full h-full object-cover" />
-                        )}
+        <section className="py-24 max-w-5xl mx-auto px-6">
+          <div className="space-y-24">
+            {workshops.map((ws, i) => (
+              <div key={ws.id} className={`flex flex-col md:flex-row gap-12 items-center ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                <div className="flex-1">
+                  <div className="aspect-[4/3] overflow-hidden rounded-2xl shadow-xl bg-gray-50">
+                    {ws.image_url ? (
+                      <img src={ws.image_url} alt={ws.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-300">
+                        No Image
                       </div>
-                    </div>
-                    <div className="flex-1 space-y-6">
-                      {c.level && (
-                        <span className="bg-accent/10 text-accent px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">{c.level}</span>
-                      )}
-                      <h2 className="text-3xl font-serif">{c.title}</h2>
-                      <p className="text-lg opacity-80 leading-relaxed">{c.description}</p>
-                      <div className="flex gap-8 text-sm border-y border-accent/10 py-4">
-                        {c.duration && (
-                          <div>
-                            <span className="block font-bold">時長</span>
-                            <span className="opacity-60">{c.duration}</span>
-                          </div>
-                        )}
-                        {c.price && (
-                          <div>
-                            <span className="block font-bold">費用</span>
-                            <span className="opacity-60">{c.price}</span>
-                          </div>
-                        )}
-                      </div>
-                      <button className="bg-foreground text-background px-10 py-3 rounded-full hover:bg-accent hover:text-white transition-all">
-                        立即預約
-                      </button>
-                    </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Special Services */}
-          {services.length > 0 && (
-            <section className="bg-accent/5 py-24 border-y border-accent/10">
-              <div className="max-w-5xl mx-auto px-6">
-                <h2 className="text-3xl font-serif mb-16 text-center">品牌與團體服務</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  {services.map((s) => (
-                    <div key={s._id} className="bg-white p-10 rounded-3xl shadow-sm border border-accent/5">
-                      <h3 className="text-2xl font-serif mb-6">{s.title}</h3>
-                      <p className="text-lg opacity-80 mb-6 leading-relaxed">{s.description}</p>
-                      {s.example && (
-                        <p className="text-accent font-medium italic">{s.example}</p>
-                      )}
-                    </div>
-                  ))}
+                </div>
+                <div className="flex-1 space-y-6">
+                  <h2 className="text-3xl font-serif">{ws.title}</h2>
+                  <p className="text-lg opacity-80 leading-relaxed whitespace-pre-wrap">{ws.description}</p>
+                  <div className="flex gap-8 text-sm border-y border-accent/10 py-4">
+                    {ws.duration && (
+                      <div>
+                        <span className="block font-bold">時長</span>
+                        <span className="opacity-60">{ws.duration}</span>
+                      </div>
+                    )}
+                    {ws.price && (
+                      <div>
+                        <span className="block font-bold">費用</span>
+                        <span className="opacity-60">{ws.price}</span>
+                      </div>
+                    )}
+                  </div>
+                  {ws.form_url ? (
+                    <a 
+                      href={ws.form_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-foreground text-background px-10 py-3 rounded-full hover:bg-accent hover:text-white transition-all"
+                    >
+                      立即預約
+                    </a>
+                  ) : (
+                    <button className="bg-foreground text-background px-10 py-3 rounded-full opacity-50 cursor-not-allowed">
+                      即將開放
+                    </button>
+                  )}
                 </div>
               </div>
-            </section>
+            ))}
+          </div>
+          {workshops.length === 0 && (
+            <div className="text-center py-20 opacity-40 italic">
+              目前暫無開放中的工作坊
+            </div>
           )}
-        </>
+        </section>
       )}
 
       {/* Inquiry Footer */}

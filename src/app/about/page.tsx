@@ -1,10 +1,22 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export const runtime = "edge";
 
 export default function AboutPage() {
+  const [content, setContent] = useState<any>({});
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then(res => res.json())
+      .then(data => setContent(data))
+      .catch(err => console.error('Failed to fetch content', err));
+  }, []);
+
   return (
     <main className="min-h-screen">
       <Header />
@@ -33,16 +45,19 @@ export default function AboutPage() {
           <div className="order-2 md:order-1">
             <span className="text-accent uppercase tracking-widest text-sm font-bold mb-4 block">The Founder</span>
             <h2 className="text-3xl mb-8 font-serif text-secondary">羅家寶 KAME LAW</h2>
-            <div className="space-y-6 text-lg leading-loose text-secondary/80">
-              <p>
-                香港刺繡家、「初刺」品牌創辦人。自 2019 年開始接觸刺繡，從興趣出發，逐漸發展成為其主要創作與教學方向。
-              </p>
-              <p>
-                早期以製作各類生活刺繡品為主，其後創立個人品牌「初刺」，專注推廣手工刺繡文化及個人化創作體驗。作品涵蓋文字設計、布藝飾物及小型藝術創作，透過一針一線呈現生活細節與情感記憶。
-              </p>
-              <p>
-                作為一名刺繡導師，Kame 相信刺繡不單是一種工藝，更是一種表達內心世界的藝術語言。在她的課堂中，學員不僅能掌握技巧，更能透過創作探索自我與情感連結。
-              </p>
+            <div className="space-y-6 text-lg leading-loose text-secondary/80 whitespace-pre-wrap">
+              {content.about_bio ? (
+                <p>{content.about_bio}</p>
+              ) : (
+                <>
+                  <p>
+                    香港刺繡家、「初刺」品牌創辦人。自 2019 年開始接觸刺繡，從興趣出發，逐漸發展成為其主要創作與教學方向。
+                  </p>
+                  <p>
+                    早期以製作各類生活刺繡品為主，其後創立個人品牌「初刺」，專注推廣手工刺繡文化及個人化創作體驗。
+                  </p>
+                </>
+              )}
             </div>
           </div>
           <div className="order-1 md:order-2 relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
