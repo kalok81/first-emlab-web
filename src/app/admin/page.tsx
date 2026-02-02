@@ -46,6 +46,14 @@ export default function AdminPage() {
   const [isSavingContent, setIsSavingContent] = useState(false);
 
   useEffect(() => {
+    const savedToken = localStorage.getItem('admin_token');
+    if (savedToken === 'admin') {
+      setPassword('admin');
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isLoggedIn) {
       fetchWorks();
       fetchCategories();
@@ -91,6 +99,7 @@ export default function AdminPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'admin') {
+      localStorage.setItem('admin_token', 'admin');
       setIsLoggedIn(true);
     } else {
       alert('密碼錯誤');
@@ -366,7 +375,11 @@ export default function AdminPage() {
             </div>
 
             <button 
-              onClick={() => setIsLoggedIn(false)}
+              onClick={() => {
+                localStorage.removeItem('admin_token');
+                setIsLoggedIn(false);
+                setPassword('');
+              }}
               className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-highlight flex items-center gap-2 transition-all hover:scale-105 active:scale-95 mr-2"
             >
               <LogOut className="w-4 h-4" /> 
