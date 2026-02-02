@@ -1,0 +1,19 @@
+backend:
+  name: github
+  repo: kalok81/first-emlab-web
+  branch: main
+
+media_folder: "public/images/works"
+public_folder: "/images/works"
+
+collections:
+  - name: "works"
+    label: "作品集"
+    folder: "src/content/works"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "分類", name: "category", widget: "string" }
+      - { label: "圖片", name: "image", widget: "image" }
+      - { label: "日期", name: "date", widget: "datetime" }
