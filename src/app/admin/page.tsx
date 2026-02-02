@@ -677,15 +677,18 @@ export default function AdminPage() {
           <div className="max-w-4xl mx-auto space-y-10">
             <div className="flex justify-between items-end">
               <div>
-                <h2 className="text-3xl font-bold text-primary tracking-tight">Edit Content (頁面內容)</h2>
+                <h2 className="text-3xl font-bold text-primary tracking-tight">管理頁面內容</h2>
                 <p className="text-primary/40 text-sm font-medium mt-1">更新工作室的首頁文字、關於我與頁尾資訊</p>
               </div>
             </div>
             
-            <Card className="p-10 border border-white/40 shadow-2xl">
-              <form onSubmit={handleContentSubmit} className="space-y-10">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Header Section (頂部導航)</h3>
+            <form onSubmit={handleContentSubmit} className="space-y-8">
+              {/* Header Section */}
+              <Card className="p-8 border border-white/40 shadow-xl">
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                    <Settings className="w-5 h-5 opacity-40" /> Header
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <Label>品牌名稱 (Brand Name)</Label>
@@ -745,65 +748,15 @@ export default function AdminPage() {
                     </div>
                   </div>
                 </div>
+              </Card>
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Home Page Cards (首頁方塊)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {[1, 2, 3, 4].map((num) => (
-                      <div key={num} className="space-y-3 bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
-                        <Label>Card {num} Image</Label>
-                        <div className="flex gap-2">
-                          <Input 
-                            type="text" 
-                            value={siteContent[`card_image_${num}`] || ''} 
-                            onChange={(e) => setSiteContent({...siteContent, [`card_image_${num}`]: e.target.value})}
-                            placeholder="圖片網址"
-                            className="flex-grow"
-                          />
-                          <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `card_image_${num}` })} className="px-4">
-                            <ImageIcon className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        {siteContent[`card_image_${num}`] && (
-                          <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
-                            <img src={siteContent[`card_image_${num}`]} alt={`Card ${num}`} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Recent Works (首頁近期作品)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <div key={num} className="space-y-3 bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
-                        <Label>Featured Image {num}</Label>
-                        <div className="flex gap-2">
-                          <Input 
-                            type="text" 
-                            value={siteContent[`featured_img_${num}`] || ''} 
-                            onChange={(e) => setSiteContent({...siteContent, [`featured_img_${num}`]: e.target.value})}
-                            placeholder="圖片網址"
-                            className="flex-grow"
-                          />
-                          <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `featured_img_${num}` })} className="px-4">
-                            <ImageIcon className="w-4 h-4" />
-                          </Button>
-                        </div>
-                        {siteContent[`featured_img_${num}`] && (
-                          <div className="mt-2 aspect-square rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
-                            <img src={siteContent[`featured_img_${num}`]} alt={`Featured ${num}`} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Hero Section</h3>
+              {/* Homepage Section */}
+              <Card className="p-8 border border-white/40 shadow-xl">
+                <div className="space-y-8">
+                  <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                    <LayoutDashboard className="w-5 h-5 opacity-40" /> Homepage
+                  </h2>
+                  
                   <div className="space-y-3">
                     <Label>首頁標語 (Hero Title)</Label>
                     <Input 
@@ -813,10 +766,7 @@ export default function AdminPage() {
                       placeholder="例如：紀錄生活中的每一份細膩"
                     />
                   </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">About & Founder Section</h3>
+
                   <div className="space-y-3">
                     <Label>品牌故事 (Brand Story / About Bio)</Label>
                     <textarea 
@@ -827,7 +777,71 @@ export default function AdminPage() {
                       placeholder="顯示於首頁的品牌介紹..."
                     />
                   </div>
-                  
+
+                  <div className="space-y-4">
+                    <Label className="text-sm opacity-60 uppercase tracking-widest font-black">Home Page Cards (首頁方塊)</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[1, 2, 3, 4].map((num) => (
+                        <div key={num} className="space-y-3 bg-secondary/5 p-4 rounded-2xl border border-secondary/10">
+                          <Label>Card {num} Image</Label>
+                          <div className="flex gap-2">
+                            <Input 
+                              type="text" 
+                              value={siteContent[`card_image_${num}`] || ''} 
+                              onChange={(e) => setSiteContent({...siteContent, [`card_image_${num}`]: e.target.value})}
+                              placeholder="圖片網址"
+                              className="flex-grow text-xs"
+                            />
+                            <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `card_image_${num}` })} className="px-3 py-1">
+                              <ImageIcon className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          {siteContent[`card_image_${num}`] && (
+                            <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                              <img src={siteContent[`card_image_${num}`]} alt={`Card ${num}`} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label className="text-sm opacity-60 uppercase tracking-widest font-black">Recent Works (首頁近期作品)</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[1, 2, 3, 4, 5].map((num) => (
+                        <div key={num} className="space-y-3 bg-secondary/5 p-4 rounded-2xl border border-secondary/10">
+                          <Label>Featured Image {num}</Label>
+                          <div className="flex gap-2">
+                            <Input 
+                              type="text" 
+                              value={siteContent[`featured_img_${num}`] || ''} 
+                              onChange={(e) => setSiteContent({...siteContent, [`featured_img_${num}`]: e.target.value})}
+                              placeholder="圖片網址"
+                              className="flex-grow text-xs"
+                            />
+                            <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `featured_img_${num}` })} className="px-3 py-1">
+                              <ImageIcon className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          {siteContent[`featured_img_${num}`] && (
+                            <div className="mt-2 aspect-square rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                              <img src={siteContent[`featured_img_${num}`]} alt={`Featured ${num}`} className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Founder Section */}
+              <Card className="p-8 border border-white/40 shadow-xl">
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5 opacity-40" /> Founder
+                  </h2>
                   <div className="space-y-3">
                     <Label>創辦人介紹 (Founder Bio)</Label>
                     <textarea 
@@ -854,15 +868,20 @@ export default function AdminPage() {
                       </Button>
                     </div>
                     {siteContent.founder_image && (
-                      <div className="mt-2 w-32 h-40 rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                      <div className="mt-4 w-40 h-52 rounded-2xl overflow-hidden border-2 border-white shadow-xl">
                         <img src={siteContent.founder_image} alt="Founder" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
                 </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Footer Section (頁尾資訊)</h3>
+              </Card>
+              
+              {/* Footer Section */}
+              <Card className="p-8 border border-white/40 shadow-xl">
+                <div className="space-y-6">
+                  <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                    <Search className="w-5 h-5 opacity-40" /> Footer
+                  </h2>
                   <div className="space-y-3">
                     <Label>頁尾版權文字 (Footer Text)</Label>
                     <Input 
@@ -930,17 +949,17 @@ export default function AdminPage() {
                     </div>
                   </div>
                 </div>
+              </Card>
                 
-                <Button 
-                  type="submit" 
-                  isLoading={isSavingContent}
-                  className="w-full shadow-primary/40"
-                  size="lg"
-                >
-                  確認更新全站內容
-                </Button>
-              </form>
-            </Card>
+              <Button 
+                type="submit" 
+                isLoading={isSavingContent}
+                className="w-full shadow-primary/40 py-6 text-lg font-bold"
+                size="lg"
+              >
+                確認更新全站內容
+              </Button>
+            </form>
           </div>
         )}
       </main>
