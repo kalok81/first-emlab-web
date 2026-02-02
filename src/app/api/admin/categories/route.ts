@@ -24,17 +24,28 @@ export async function POST(request: Request) {
     if (!name) return Response.json({ error: 'Missing name' }, { status: 400 });
 
     // Generate slug from name if not provided
-    const slug = providedSlug || name.toLowerCase()
+    let slug = providedSlug || name.toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
     const db = getRequestContext().env.DB;
+
+    // Ensure slug is unique
+    let finalSlug = slug;
+    let counter = 1;
+    while (true) {
+      const existing = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(finalSlug).first();
+      if (!existing) break;
+      finalSlug = `${slug}-${counter}`;
+      counter++;
+    }
+
     await db.prepare('INSERT INTO categories (name, slug) VALUES (?, ?)')
-      .bind(name, slug)
+      .bind(name, finalSlug)
       .run();
-    return Response.json({ success: true });
+    return Response.json({ success: true, slug: finalSlug });
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 500 });
   }
