@@ -104,3 +104,9 @@ h1, h2, h3, h4, h5, h6 {
 @utility stagger-2 { animation-delay: 0.2s; }
 @utility stagger-3 { animation-delay: 0.3s; }
 @utility stagger-4 { animation-delay: 0.4s; }
+
+/* Force remove grayscale filters */
+img {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
