@@ -634,6 +634,7 @@ export default function AdminPage() {
                     <Label>頁尾版權文字 (Footer Text)</Label>
                     <Input 
                       type="text" 
+                      name="footer_text"
                       value={siteContent.footer_text || ''} 
                       onChange={(e) => setSiteContent({...siteContent, footer_text: e.target.value})}
                       placeholder="例如：© 2024 EM Lab. All rights reserved."
@@ -642,27 +643,30 @@ export default function AdminPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-3">
-                      <Label>工作室地址 (Address)</Label>
+                      <Label>地址</Label>
                       <Input 
                         type="text" 
+                        name="footer_address"
                         value={siteContent.footer_address || ''} 
                         onChange={(e) => setSiteContent({...siteContent, footer_address: e.target.value})}
                         placeholder="工作室地址"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label>聯絡電話 (Phone)</Label>
+                      <Label>電話</Label>
                       <Input 
                         type="text" 
+                        name="footer_phone"
                         value={siteContent.footer_phone || ''} 
                         onChange={(e) => setSiteContent({...siteContent, footer_phone: e.target.value})}
                         placeholder="聯絡電話"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label>聯絡 Email</Label>
+                      <Label>Email</Label>
                       <Input 
                         type="email" 
+                        name="footer_email"
                         value={siteContent.footer_email || ''} 
                         onChange={(e) => setSiteContent({...siteContent, footer_email: e.target.value})}
                         placeholder="聯絡 Email"
