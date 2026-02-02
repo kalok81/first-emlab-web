@@ -4,6 +4,7 @@ export const runtime = 'edge';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import FeaturedGallery from '@/components/FeaturedGallery';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -139,31 +140,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { src: content.featured_img_1 || "/images/works/student/02.jpg", span: "" },
-              { src: content.featured_img_2 || "/images/works/products/03.jpg", span: "md:row-span-2" },
-              { src: content.featured_img_3 || "/images/works/workshop/02.jpg", span: "" },
-              { src: content.featured_img_4 || "/images/works/student/03.jpg", span: "" },
-              { src: content.featured_img_5 || "/images/works/products/04.jpg", span: "" }
-            ].map((item, i) => (
-              <div key={i} className={`group overflow-hidden relative rounded-xl shadow-sm ${item.span}`}>
-                <Image 
-                  src={item.src} 
-                  alt="Embroidery work"
-                  width={600}
-                  height={800}
-                  unoptimized
-                  className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                   <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500">
-                      <span className="text-primary text-xl">+</span>
-                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <FeaturedGallery content={content} />
           <div className="mt-16 text-center md:hidden">
             <Link href="/works" className="bg-primary text-white px-8 py-3 rounded-full text-sm tracking-widest">
               查看更多作品
