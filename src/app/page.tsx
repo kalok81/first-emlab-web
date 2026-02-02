@@ -11,12 +11,19 @@ import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [content, setContent] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/content')
       .then(res => res.json())
-      .then(data => setContent(data))
-      .catch(err => console.error('Failed to fetch content', err));
+      .then(data => {
+        setContent(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch content', err);
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -25,13 +32,17 @@ export default function Home() {
       
       {/* Hero Section - Refined with Float & Fade-Up */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <Image 
-          src="/images/works/hero/01.jpg"
-          alt="初刺刺繡 - 學會刺繡，也學會過溫暖的日子"
-          fill
-          className="object-cover opacity-90 scale-105"
-          priority unoptimized
-        />
+        {isLoading ? (
+          <div className="absolute inset-0 bg-neutral-200 animate-pulse" />
+        ) : (
+          <Image 
+            src={content.hero_image || ""}
+            alt="初刺刺繡 - 學會刺繡，也學會過溫暖的日子"
+            fill
+            className="object-cover opacity-90 scale-105"
+            priority unoptimized
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-background" />
         
         <div className="relative text-center text-white px-6 max-w-4xl">
@@ -40,10 +51,18 @@ export default function Home() {
               Est. 2019 • Hong Kong
             </span>
             <h1 className="text-5xl md:text-7xl mb-8 tracking-wider font-serif leading-tight drop-shadow-2xl">
-              {content.hero_title || '學會刺繡，也學會溫柔地過日子'}
+              {isLoading ? (
+                <div className="h-16 md:h-24 w-3/4 mx-auto bg-white/20 animate-pulse rounded" />
+              ) : (
+                content.hero_title || '學會刺繡，也學會溫柔地過日子'
+              )}
             </h1>
             <p className="text-xl md:text-2xl font-light opacity-90 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-              在大忙的世界裡，找回指尖上的安靜時光
+              {isLoading ? (
+                <div className="h-8 w-1/2 mx-auto bg-white/20 animate-pulse rounded mt-4" />
+              ) : (
+                '在大忙的世界裡，找回指尖上的安靜時光'
+              )}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <Link href="/workshop" className="group bg-white text-primary px-10 py-4 rounded-full font-medium transition-all hover:bg-secondary hover:text-white hover:shadow-2xl hover:-translate-y-1">
@@ -70,7 +89,13 @@ export default function Home() {
           <span className="text-accent uppercase tracking-[0.4em] text-xs font-bold mb-6 block">Our Story</span>
           <h2 className="text-4xl md:text-5xl mb-12 font-serif text-primary">關於初刺</h2>
           <div className="space-y-8 text-xl leading-loose opacity-80 whitespace-pre-wrap font-light max-w-2xl mx-auto">
-            {content.about_bio ? (
+            {isLoading ? (
+              <div className="space-y-4">
+                <div className="h-6 bg-neutral-200 animate-pulse rounded w-full" />
+                <div className="h-6 bg-neutral-200 animate-pulse rounded w-5/6 mx-auto" />
+                <div className="h-6 bg-neutral-200 animate-pulse rounded w-4/5 mx-auto" />
+              </div>
+            ) : content.about_bio ? (
               <p>{content.about_bio}</p>
             ) : (
               <>
@@ -99,28 +124,32 @@ export default function Home() {
               title="刺繡工作坊" 
               desc="從零開始，體驗刺繡之美" 
               href="/workshop"
-              image={content.card_image_1 || "/images/works/workshop/01.jpg"}
+              image={content.card_image_1}
+              isLoading={isLoading}
               index={1}
             />
             <CategoryCard 
               title="作品集" 
               desc="我們最近的故事與創作" 
               href="/works"
-              image={content.card_image_2 || "/images/works/student/01.jpg"}
+              image={content.card_image_2}
+              isLoading={isLoading}
               index={2}
             />
             <CategoryCard 
               title="材料包" 
               desc="將溫暖帶回家延續" 
               href="/kits"
-              image={content.card_image_3 || "/images/works/products/01.jpg"}
+              image={content.card_image_3}
+              isLoading={isLoading}
               index={3}
             />
             <CategoryCard 
               title="訂製服務" 
               desc="為你的故事量身打造" 
               href="/custom"
-              image={content.card_image_4 || "/images/works/products/02.jpg"}
+              image={content.card_image_4}
+              isLoading={isLoading}
               index={4}
             />
           </div>
@@ -140,7 +169,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <FeaturedGallery content={content} />
+          <FeaturedGallery content={content} isLoading={isLoading} />
           <div className="mt-16 text-center md:hidden">
             <Link href="/works" className="bg-primary text-white px-8 py-3 rounded-full text-sm tracking-widest">
               查看更多作品
@@ -154,10 +183,14 @@ export default function Home() {
   );
 }
 
-function CategoryCard({ title, desc, href, image, index }: { title: string, desc: string, href: string, image: string, index: number }) {
+function CategoryCard({ title, desc, href, image, index, isLoading }: { title: string, desc: string, href: string, image: string, index: number, isLoading: boolean }) {
   return (
     <Link href={href} className={`group relative block aspect-[3/4.5] overflow-hidden rounded-2xl shadow-japanese transition-all hover:-translate-y-3 animate-fade-up stagger-${index}`}>
-      <Image src={image} alt={title} fill unoptimized className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+      {isLoading ? (
+        <div className="absolute inset-0 bg-neutral-200 animate-pulse" />
+      ) : (
+        <Image src={image || ""} alt={title} fill unoptimized className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
       <div className="absolute inset-0 p-8 flex flex-col justify-end">
         <h3 className="text-2xl mb-3 font-serif text-white tracking-wide">{title}</h3>
