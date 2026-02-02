@@ -334,8 +334,8 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div className="flex-1 flex justify-center px-2 overflow-hidden">
-              <nav className="flex items-center gap-1 sm:gap-2 bg-primary/5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl overflow-x-auto no-scrollbar flex-nowrap">
+            <div className="flex-1 flex justify-center px-2">
+              <nav className="flex items-center justify-center gap-1 sm:gap-2 bg-primary/5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl flex-wrap">
                 {[
                   { id: 'portfolio', label: '作品集', icon: LayoutDashboard },
                   { id: 'workshops', label: '課程管理', icon: BookOpen },
