@@ -35,7 +35,14 @@ export default function AdminPage() {
   const [productFormData, setProductFormData] = useState({ id: null, title: '', price: '', description: '', image_url: '', buy_link: '' });
 
   // Site Content State
-  const [siteContent, setSiteContent] = useState<any>({ hero_title: '', about_bio: '', footer_text: '' });
+  const [siteContent, setSiteContent] = useState<any>({ 
+    hero_title: '', 
+    about_bio: '', 
+    footer_text: '',
+    footer_address: '',
+    footer_phone: '',
+    footer_email: ''
+  });
   const [isSavingContent, setIsSavingContent] = useState(false);
 
   useEffect(() => {
@@ -617,6 +624,36 @@ export default function AdminPage() {
                     onChange={(e) => setSiteContent({...siteContent, footer_text: e.target.value})}
                     placeholder="例如：© 2024 EM Lab. All rights reserved."
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-3">
+                    <Label>工作室地址</Label>
+                    <Input 
+                      type="text" 
+                      value={siteContent.footer_address || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, footer_address: e.target.value})}
+                      placeholder="工作室地址"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <Label>聯絡電話</Label>
+                    <Input 
+                      type="text" 
+                      value={siteContent.footer_phone || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, footer_phone: e.target.value})}
+                      placeholder="聯絡電話"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <Label>聯絡 Email</Label>
+                    <Input 
+                      type="email" 
+                      value={siteContent.footer_email || ''} 
+                      onChange={(e) => setSiteContent({...siteContent, footer_email: e.target.value})}
+                      placeholder="聯絡 Email"
+                    />
+                  </div>
                 </div>
                 
                 <Button 
