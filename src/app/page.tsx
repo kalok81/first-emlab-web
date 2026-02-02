@@ -141,12 +141,11 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {[
-              { src: "/images/works/student/02.jpg", span: "" },
-              { src: "/images/works/products/03.jpg", span: "md:row-span-2" },
-              { src: "/images/works/workshop/02.jpg", span: "" },
-              { src: "/images/works/student/03.jpg", span: "" },
-              { src: "/images/works/products/04.jpg", span: "" },
-              { src: "/images/works/workshop/03.jpg", span: "" }
+              { src: content.featured_img_1 || "/images/works/student/02.jpg", span: "" },
+              { src: content.featured_img_2 || "/images/works/products/03.jpg", span: "md:row-span-2" },
+              { src: content.featured_img_3 || "/images/works/workshop/02.jpg", span: "" },
+              { src: content.featured_img_4 || "/images/works/student/03.jpg", span: "" },
+              { src: content.featured_img_5 || "/images/works/products/04.jpg", span: "" }
             ].map((item, i) => (
               <div key={i} className={`group overflow-hidden relative rounded-xl shadow-sm ${item.span}`}>
                 <img 

@@ -328,7 +328,7 @@ export default function AdminPage() {
       setWsFormData(prev => ({ ...prev, image_url: url }));
     } else if (target === 'product') {
       setProductFormData(prev => ({ ...prev, image_url: url }));
-    } else if (target.startsWith('card_image_')) {
+    } else if (target.startsWith('card_image_') || target.startsWith('featured_img_')) {
       setSiteContent((prev: any) => ({ ...prev, [target]: url }));
     }
     
@@ -750,6 +750,34 @@ export default function AdminPage() {
                         {siteContent[`card_image_${num}`] && (
                           <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
                             <img src={siteContent[`card_image_${num}`]} alt={`Card ${num}`} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Recent Works (首頁近期作品)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <div key={num} className="space-y-3 bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
+                        <Label>Featured Image {num}</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="text" 
+                            value={siteContent[`featured_img_${num}`] || ''} 
+                            onChange={(e) => setSiteContent({...siteContent, [`featured_img_${num}`]: e.target.value})}
+                            placeholder="圖片網址"
+                            className="flex-grow"
+                          />
+                          <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `featured_img_${num}` })} className="px-4">
+                            <ImageIcon className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        {siteContent[`featured_img_${num}`] && (
+                          <div className="mt-2 aspect-square rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                            <img src={siteContent[`featured_img_${num}`]} alt={`Featured ${num}`} className="w-full h-full object-cover" />
                           </div>
                         )}
                       </div>
