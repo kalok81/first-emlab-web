@@ -334,23 +334,25 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <nav className="flex items-center gap-2 bg-primary/5 p-1.5 rounded-2xl">
-              {[
-                { id: 'portfolio', label: '作品集', icon: LayoutDashboard },
-                { id: 'workshops', label: '課程管理', icon: BookOpen },
-                { id: 'kits', label: '材料包', icon: Heart },
-                { id: 'content', label: '頁面內容', icon: Settings },
-              ].map((tab) => (
-                <button 
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${activeTab === tab.id ? 'bg-primary text-white shadow-lg' : 'text-primary/50 hover:text-primary hover:bg-white/50'}`}
-                >
-                  <tab.icon className="w-4 h-4" /> 
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              ))}
-            </nav>
+            <div className="flex-1 flex justify-center px-2 overflow-hidden">
+              <nav className="flex items-center gap-1 sm:gap-2 bg-primary/5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl overflow-x-auto no-scrollbar flex-nowrap">
+                {[
+                  { id: 'portfolio', label: '作品集', icon: LayoutDashboard },
+                  { id: 'workshops', label: '課程管理', icon: BookOpen },
+                  { id: 'kits', label: '材料包', icon: Heart },
+                  { id: 'content', label: '頁面內容', icon: Settings },
+                ].map((tab) => (
+                  <button 
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`whitespace-nowrap px-3 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition-all flex items-center gap-2 flex-shrink-0 ${activeTab === tab.id ? 'bg-primary text-white shadow-lg' : 'text-primary/50 hover:text-primary hover:bg-white/50'}`}
+                  >
+                    <tab.icon className="w-3.5 h-3.5 sm:w-4 h-4" /> 
+                    <span className="inline">{tab.label}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
 
             <button 
               onClick={() => setIsLoggedIn(false)}
