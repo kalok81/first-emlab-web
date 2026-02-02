@@ -151,7 +151,7 @@ export default function Home() {
                 <img 
                   src={item.src} 
                   alt="Embroidery work"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                    <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500">
