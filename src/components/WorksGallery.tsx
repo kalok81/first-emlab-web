@@ -27,17 +27,17 @@ export default function WorksGallery({ works, categories }: { works: WorkItem[],
     : works.filter(w => w.category === activeCategory);
 
   return (
-    <section className="py-20 max-w-6xl mx-auto px-4">
-      {/* Category Filter */}
-      <div className="flex flex-wrap justify-center gap-4 mb-16">
+    <section className="py-24 max-w-7xl mx-auto px-6 washi-texture">
+      {/* Category Filter - Refined Japanese Style */}
+      <div className="flex flex-wrap justify-center gap-6 mb-24">
         {filterOptions.map(c => (
           <button 
             key={c.value} 
             onClick={() => setActiveCategory(c.value)}
-            className={`px-8 py-2 rounded-full border transition-all duration-300 text-sm font-medium ${
+            className={`px-10 py-2.5 rounded-full border tracking-[0.2em] text-xs uppercase transition-all duration-500 font-bold ${
               activeCategory === c.value 
-              ? 'bg-accent border-accent text-white shadow-lg scale-105' 
-              : 'border-accent/20 text-accent hover:border-accent hover:bg-accent/5'
+              ? 'bg-primary border-primary text-white shadow-japanese scale-105' 
+              : 'border-accent/10 text-accent hover:border-accent hover:bg-accent/5'
             }`}
           >
             {c.label}
@@ -45,45 +45,45 @@ export default function WorksGallery({ works, categories }: { works: WorkItem[],
         ))}
       </div>
 
-      {/* Works Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      {/* Works Grid - Masonry-like spacing */}
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
         {filteredWorks.map((work, i) => (
-          <div key={i} className="group animate-fadeIn" style={{ animationDelay: `${i * 100}ms` }}>
-            <div className="aspect-[4/5] overflow-hidden mb-6 rounded-2xl shadow-sm relative bg-gray-50">
+          <div 
+            key={i} 
+            className="break-inside-avoid group animate-fade-up" 
+            style={{ animationDelay: `${i * 100}ms` }}
+          >
+            <div className="jp-card mb-4 relative group">
               {work.src && (
                 <img 
                   src={work.src} 
                   alt={work.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
               )}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                 <div className="bg-white/90 px-6 py-2 rounded-full text-primary text-xs tracking-widest scale-90 group-hover:scale-100 transition-all duration-500">
+                    ZOOM VIEW
+                 </div>
+              </div>
             </div>
-            <h3 className="font-serif text-xl mb-2 group-hover:text-accent transition-colors">{work.title}</h3>
-            <div className="flex items-center gap-3 opacity-60 text-sm">
-              <span>{work.date}</span>
-              <span className="w-1 h-1 bg-current rounded-full" />
-              <span>手工刺繡</span>
+            <div className="px-2 space-y-2">
+              <h3 className="font-serif text-xl text-primary tracking-wide group-hover:text-accent transition-colors">{work.title}</h3>
+              <div className="flex items-center gap-4 opacity-50 text-[10px] uppercase tracking-widest font-bold">
+                <span>{work.date}</span>
+                <span className="w-8 h-[1px] bg-accent/30" />
+                <span>Handmade Embroidery</span>
+              </div>
             </div>
           </div>
         ))}
       </div>
       
       {filteredWorks.length === 0 && (
-        <div className="text-center py-20">
-          <p className="opacity-40">此分類暫無作品</p>
+        <div className="text-center py-32 border-2 border-dashed border-accent/10 rounded-3xl">
+          <p className="opacity-40 italic tracking-widest">此分類暫無作品 NO WORKS IN THIS CATEGORY</p>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease forwards;
-        }
-      `}</style>
     </section>
   );
 }
