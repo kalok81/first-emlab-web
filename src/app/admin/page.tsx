@@ -360,12 +360,17 @@ export default function AdminPage() {
         <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         
         <Card className="w-full max-w-md relative z-10 p-12 text-center">
+          <head>
+            <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+            <meta httpEquiv="Pragma" content="no-cache" />
+            <meta httpEquiv="Expires" content="0" />
+          </head>
           <div className="flex justify-center mb-8">
             <div className="bg-primary p-4 rounded-2xl shadow-xl rotate-3 hover:rotate-0 transition-transform duration-500">
               <Heart className="text-secondary w-10 h-10" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab</h1>
+          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab CMS v3.8</h1>
           <p className="text-primary/60 text-sm mb-10 italic">"Creating with heart, living with grace."</p>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -389,7 +394,7 @@ export default function AdminPage() {
           </form>
           
           <p className="mt-12 text-[10px] text-primary/30 uppercase tracking-[0.2em]">
-            Admin Control Panel v3.5 • Pro Max Edition
+            Admin Control Panel v3.8 • Cache Buster
           </p>
         </Card>
       </div>
@@ -398,6 +403,11 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen pb-20 selection:bg-secondary/30 bg-transparent relative overflow-hidden">
+      <head>
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+      </head>
       {/* Background Decorations */}
       <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
@@ -412,7 +422,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <span className="font-bold text-lg text-primary tracking-tight block leading-none">EM Lab</span>
-                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin Pro Max</span>
+                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin CMS v3.8</span>
               </div>
             </div>
 
