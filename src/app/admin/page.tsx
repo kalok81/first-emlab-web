@@ -4,15 +4,17 @@ export const runtime = 'edge';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Trash2, Upload, LogOut, Plus, X, Image as ImageIcon, Loader2, Edit2, Settings, BookOpen, LayoutDashboard, Heart } from 'lucide-react';
+import { Trash2, Upload, LogOut, Plus, X, Image as ImageIcon, Loader2, Edit2, Settings, BookOpen, LayoutDashboard, Heart, Search } from 'lucide-react';
 import { Button, Card, Input, Label } from '@/components/AdminUI';
+import ImagePicker from '@/components/admin/ImagePicker';
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'portfolio' | 'workshops' | 'kits' | 'content'>('portfolio');
   
-  // Portfolio State
+  // Image Picker State
+  const [pickerConfig, setPickerConfig] = useState<{ show: boolean, target: string } | null>(null);
   const [works, setWorks] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -318,13 +320,19 @@ export default function AdminPage() {
     }
   };
 
-  const handleDeleteCategory = async (id: number) => {
-    if (!confirm('確定要刪除此分類嗎？注意：刪除分類可能導致該分類下的作品無法正常顯示。')) return;
-    const res = await fetch(`/api/admin/categories?id=${id}`, { 
-      method: 'DELETE',
-      headers: { 'Authorization': password }
-    });
-    if (res.ok) fetchCategories();
+  const handleImageSelect = (url: string) => {
+    if (!pickerConfig) return;
+    
+    const { target } = pickerConfig;
+    if (target === 'workshop') {
+      setWsFormData(prev => ({ ...prev, image_url: url }));
+    } else if (target === 'product') {
+      setProductFormData(prev => ({ ...prev, image_url: url }));
+    } else if (target.startsWith('card_image_')) {
+      setSiteContent((prev: any) => ({ ...prev, [target]: url }));
+    }
+    
+    setPickerConfig(null);
   };
 
   if (!isLoggedIn) {
@@ -722,6 +730,34 @@ export default function AdminPage() {
                 </div>
 
                 <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Home Page Cards (首頁方塊)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {[1, 2, 3, 4].map((num) => (
+                      <div key={num} className="space-y-3 bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
+                        <Label>Card {num} Image</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="text" 
+                            value={siteContent[`card_image_${num}`] || ''} 
+                            onChange={(e) => setSiteContent({...siteContent, [`card_image_${num}`]: e.target.value})}
+                            placeholder="圖片網址"
+                            className="flex-grow"
+                          />
+                          <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: `card_image_${num}` })} className="px-4">
+                            <ImageIcon className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        {siteContent[`card_image_${num}`] && (
+                          <div className="mt-2 aspect-video rounded-xl overflow-hidden border border-secondary/20 shadow-sm">
+                            <img src={siteContent[`card_image_${num}`]} alt={`Card ${num}`} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
                   <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Hero Section</h3>
                   <div className="space-y-3">
                     <Label>首頁標語 (Hero Title)</Label>
@@ -859,7 +895,17 @@ export default function AdminPage() {
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>圖片網址</Label>
-                  <Input type="text" value={wsFormData.image_url} onChange={(e) => setWsFormData({...wsFormData, image_url: e.target.value})} placeholder="https://images.unsplash.com/..." />
+                  <div className="flex gap-2">
+                    <Input type="text" value={wsFormData.image_url} onChange={(e) => setWsFormData({...wsFormData, image_url: e.target.value})} placeholder="https://images.unsplash.com/..." className="flex-grow" />
+                    <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: 'workshop' })} className="px-4">
+                      <ImageIcon className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  {wsFormData.image_url && (
+                    <div className="mt-2 w-24 h-24 rounded-lg overflow-hidden border border-secondary/20">
+                      <img src={wsFormData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>報名表單連結 (Google Form)</Label>
@@ -902,7 +948,17 @@ export default function AdminPage() {
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>圖片網址</Label>
-                  <Input type="text" value={productFormData.image_url} onChange={(e) => setProductFormData({...productFormData, image_url: e.target.value})} placeholder="/images/works/products/01.jpg" />
+                  <div className="flex gap-2">
+                    <Input type="text" value={productFormData.image_url} onChange={(e) => setProductFormData({...productFormData, image_url: e.target.value})} placeholder="/images/works/products/01.jpg" className="flex-grow" />
+                    <Button type="button" variant="secondary" onClick={() => setPickerConfig({ show: true, target: 'product' })} className="px-4">
+                      <ImageIcon className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  {productFormData.image_url && (
+                    <div className="mt-2 w-24 h-24 rounded-lg overflow-hidden border border-secondary/20">
+                      <img src={productFormData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
                 <div className="col-span-2 space-y-2">
                   <Label>購買連結 (WhatsApp/Shopify/etc)</Label>
@@ -1001,6 +1057,13 @@ export default function AdminPage() {
             </div>
           </Card>
         </div>
+      )}
+
+      {pickerConfig?.show && (
+        <ImagePicker 
+          onSelect={handleImageSelect} 
+          onClose={() => setPickerConfig(null)} 
+        />
       )}
     </div>
   );

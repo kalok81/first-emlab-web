@@ -98,28 +98,28 @@ export default function Home() {
               title="刺繡工作坊" 
               desc="從零開始，體驗刺繡之美" 
               href="/workshop"
-              image="/images/works/workshop/01.jpg"
+              image={content.card_image_1 || "/images/works/workshop/01.jpg"}
               index={1}
             />
             <CategoryCard 
               title="作品集" 
               desc="我們最近的故事與創作" 
               href="/works"
-              image="/images/works/student/01.jpg"
+              image={content.card_image_2 || "/images/works/student/01.jpg"}
               index={2}
             />
             <CategoryCard 
               title="材料包" 
               desc="將溫暖帶回家延續" 
               href="/kits"
-              image="/images/works/products/01.jpg"
+              image={content.card_image_3 || "/images/works/products/01.jpg"}
               index={3}
             />
             <CategoryCard 
               title="訂製服務" 
               desc="為你的故事量身打造" 
               href="/custom"
-              image="/images/works/products/02.jpg"
+              image={content.card_image_4 || "/images/works/products/02.jpg"}
               index={4}
             />
           </div>
