@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [newCatName, setNewCatName] = useState('');
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCat, setEditingCat] = useState<{ id: number, name: string } | null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
 
@@ -273,17 +274,30 @@ export default function AdminPage() {
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/admin/categories', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': password
-      },
-      body: JSON.stringify({ name: newCatName }),
-    });
-    if (res.ok) {
-      setNewCatName('');
-      fetchCategories();
+    if (!newCatName.trim() || isAddingCategory) return;
+    
+    setIsAddingCategory(true);
+    try {
+      const res = await fetch('/api/admin/categories', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': password
+        },
+        body: JSON.stringify({ name: newCatName }),
+      });
+      if (res.ok) {
+        setNewCatName('');
+        await fetchCategories();
+      } else {
+        const err = await res.json();
+        alert(err.error || '新增失敗');
+      }
+    } catch (error) {
+      console.error('Error adding category:', error);
+      alert('發生錯誤');
+    } finally {
+      setIsAddingCategory(false);
     }
   };
 
@@ -948,7 +962,7 @@ export default function AdminPage() {
                       required 
                       className="flex-grow"
                     />
-                    <Button type="submit" className="shadow-none px-6" size="md">
+                    <Button type="submit" isLoading={isAddingCategory} className="shadow-none px-6" size="md">
                       <Plus className="w-4 h-4 mr-1" /> 新增
                     </Button>
                   </div>
