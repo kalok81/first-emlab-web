@@ -10,7 +10,7 @@ import { Button, Card, Input, Label } from '@/components/AdminUI';
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState<'portfolio' | 'workshops' | 'content'>('portfolio');
+  const [activeTab, setActiveTab] = useState<'portfolio' | 'workshops' | 'kits' | 'content'>('portfolio');
   
   // Portfolio State
   const [works, setWorks] = useState<any[]>([]);
@@ -29,6 +29,11 @@ export default function AdminPage() {
   const [workshopModal, setWorkshopModal] = useState<{ show: boolean, mode: 'add' | 'edit', data?: any }>({ show: false, mode: 'add' });
   const [wsFormData, setWsFormData] = useState({ id: null, title: '', description: '', price: '', duration: '', image_url: '', form_url: '' });
 
+  // Kits State
+  const [products, setProducts] = useState<any[]>([]);
+  const [productModal, setProductModal] = useState<{ show: boolean, mode: 'add' | 'edit', data?: any }>({ show: false, mode: 'add' });
+  const [productFormData, setProductFormData] = useState({ id: null, title: '', price: '', description: '', image_url: '', buy_link: '' });
+
   // Site Content State
   const [siteContent, setSiteContent] = useState<any>({ hero_title: '', about_bio: '', footer_text: '' });
   const [isSavingContent, setIsSavingContent] = useState(false);
@@ -38,6 +43,7 @@ export default function AdminPage() {
       fetchWorks();
       fetchCategories();
       fetchWorkshops();
+      fetchProducts();
       fetchContent();
     }
   }, [isLoggedIn]);
@@ -61,6 +67,12 @@ export default function AdminPage() {
     const res = await fetch('/api/workshops');
     const data = await res.json();
     if (Array.isArray(data)) setWorkshops(data);
+  };
+
+  const fetchProducts = async () => {
+    const res = await fetch('/api/products');
+    const data = await res.json();
+    if (Array.isArray(data)) setProducts(data);
   };
 
   const fetchContent = async () => {
@@ -177,6 +189,44 @@ export default function AdminPage() {
     if (res.ok) fetchWorkshops();
   };
 
+  // Kits Handlers
+  const openProductModal = (mode: 'add' | 'edit', data?: any) => {
+    setProductModal({ show: true, mode, data });
+    if (mode === 'edit' && data) {
+      setProductFormData(data);
+    } else {
+      setProductFormData({ id: null, title: '', price: '', description: '', image_url: '', buy_link: '' });
+    }
+  };
+
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const method = productModal.mode === 'add' ? 'POST' : 'PUT';
+    const res = await fetch('/api/products', {
+      method,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
+      body: JSON.stringify(productFormData),
+    });
+    if (res.ok) {
+      fetchProducts();
+      setProductModal({ show: false, mode: 'add' });
+    } else {
+      alert('操作失敗');
+    }
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    if (!confirm('確定要刪除此材料包嗎？')) return;
+    const res = await fetch(`/api/products?id=${id}`, { 
+      method: 'DELETE',
+      headers: { 'Authorization': password }
+    });
+    if (res.ok) fetchProducts();
+  };
+
   // Content Handlers
   const handleContentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -288,6 +338,7 @@ export default function AdminPage() {
               {[
                 { id: 'portfolio', label: '作品集', icon: LayoutDashboard },
                 { id: 'workshops', label: '課程管理', icon: BookOpen },
+                { id: 'kits', label: '材料包', icon: Heart },
                 { id: 'content', label: '頁面內容', icon: Settings },
               ].map((tab) => (
                 <button 
@@ -470,6 +521,62 @@ export default function AdminPage() {
           </div>
         )}
 
+        {activeTab === 'kits' && (
+          <div className="space-y-10">
+            <div className="flex justify-between items-end">
+              <div>
+                <h2 className="text-3xl font-bold text-primary tracking-tight">刺繡材料包 Kits</h2>
+                <p className="text-primary/40 text-sm font-medium mt-1">管理您的商品與購買連結</p>
+              </div>
+              <Button 
+                onClick={() => openProductModal('add')}
+                className="shadow-primary/30"
+              >
+                <Plus className="w-5 h-5 mr-1" /> 新增材料包
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {products.map((p) => (
+                <Card key={p.id} className="flex flex-col sm:flex-row gap-6 group hover:translate-y-[-4px] transition-transform">
+                  <div className="w-full sm:w-40 h-40 rounded-2xl overflow-hidden bg-secondary/10 flex-shrink-0 shadow-inner">
+                    {p.image_url ? (
+                      <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-secondary/40"><ImageIcon className="w-10 h-10" /></div>
+                    )}
+                  </div>
+                  <div className="flex-grow flex flex-col py-1">
+                    <div className="flex-grow">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-secondary">材料包</span>
+                        <span className="w-1 h-1 rounded-full bg-secondary/50"></span>
+                        <span className="text-[10px] font-black text-highlight">{p.price}</span>
+                      </div>
+                      <h3 className="font-bold text-xl text-primary mb-2">{p.title}</h3>
+                      <p className="text-primary/60 text-sm line-clamp-2 leading-relaxed">{p.description}</p>
+                    </div>
+                    <div className="flex gap-3 mt-6">
+                      <Button variant="secondary" size="sm" onClick={() => openProductModal('edit', p)} className="flex-1 !rounded-full">
+                        <Edit2 className="w-4 h-4 mr-1.5" /> 編輯
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDeleteProduct(p.id)} className="!rounded-full border-secondary/30 !text-highlight hover:!bg-highlight/5 hover:!border-highlight/30">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            {products.length === 0 && (
+              <Card className="text-center py-32 border-2 border-dashed border-secondary/30 bg-transparent shadow-none">
+                <Heart className="w-16 h-16 mx-auto text-secondary mb-4 opacity-40" />
+                <p className="text-primary/40 font-bold">還沒有上架任何材料包</p>
+              </Card>
+            )}
+          </div>
+        )}
+
         {activeTab === 'content' && (
           <div className="max-w-3xl mx-auto space-y-10">
             <div>
@@ -565,6 +672,49 @@ export default function AdminPage() {
               <div className="flex gap-4 pt-6">
                 <Button type="button" variant="secondary" onClick={() => setWorkshopModal({ ...workshopModal, show: false })} className="flex-1">取消</Button>
                 <Button type="submit" className="flex-[2]">儲存課程資訊</Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
+
+      {/* Kit Modal */}
+      {productModal.show && (
+        <div className="fixed inset-0 bg-primary/20 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <Card className="w-full max-w-2xl !p-0 overflow-hidden shadow-2xl border border-white/40 animate-in zoom-in slide-in-from-bottom-8 duration-500">
+            <div className="p-8 border-b border-secondary/20 flex justify-between items-center bg-secondary/5">
+              <div>
+                <h3 className="font-bold text-2xl text-primary">{productModal.mode === 'add' ? '新增材料包' : '編輯材料包'}</h3>
+                <p className="text-xs text-primary/40 font-bold uppercase tracking-widest mt-1">Kit details</p>
+              </div>
+              <button onClick={() => setProductModal({ ...productModal, show: false })} className="bg-white p-2 rounded-full shadow-sm text-primary/40 hover:text-highlight transition-colors"><X className="w-6 h-6" /></button>
+            </div>
+            <form onSubmit={handleProductSubmit} className="p-8 space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="col-span-2 space-y-2">
+                  <Label>材料包名稱</Label>
+                  <Input type="text" value={productFormData.title} onChange={(e) => setProductFormData({...productFormData, title: e.target.value})} placeholder="例如：刺繡材料包 - 森林系列" required />
+                </div>
+                <div className="space-y-2">
+                  <Label>價格</Label>
+                  <Input type="text" value={productFormData.price} onChange={(e) => setProductFormData({...productFormData, price: e.target.value})} placeholder="HK$ 280" />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>圖片網址</Label>
+                  <Input type="text" value={productFormData.image_url} onChange={(e) => setProductFormData({...productFormData, image_url: e.target.value})} placeholder="/images/works/products/01.jpg" />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>購買連結 (WhatsApp/Shopify/etc)</Label>
+                  <Input type="text" value={productFormData.buy_link} onChange={(e) => setProductFormData({...productFormData, buy_link: e.target.value})} placeholder="https://wa.me/..." />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label>商品描述</Label>
+                  <textarea rows={4} value={productFormData.description} onChange={(e) => setProductFormData({...productFormData, description: e.target.value})} className="w-full p-4 bg-white/50 border border-secondary/30 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-primary" placeholder="介紹材料包包含的內容與特色..." />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-6">
+                <Button type="button" variant="secondary" onClick={() => setProductModal({ ...productModal, show: false })} className="flex-1">取消</Button>
+                <Button type="submit" className="flex-[2]">儲存商品資訊</Button>
               </div>
             </form>
           </Card>
