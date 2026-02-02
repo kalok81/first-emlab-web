@@ -1,9 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WorksGallery from '@/components/WorksGallery';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export const runtime = 'edge';

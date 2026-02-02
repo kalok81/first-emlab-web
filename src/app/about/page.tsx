@@ -1,11 +1,12 @@
 'use client';
 
+export const runtime = 'edge';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
-export const runtime = "edge";
 
 export default function AboutPage() {
   const [content, setContent] = useState<any>({});

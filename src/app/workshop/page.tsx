@@ -1,6 +1,6 @@
 'use client';
 
-export const runtime = "edge";
+export const runtime = 'edge';
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
