@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 
 export default function Footer() {
-  const [address, setAddress] = useState('觀塘興業街');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('觀塘興業街 (請至後台更新)');
+  const [phone, setPhone] = useState('WhatsApp 查詢');
+  const [email, setEmail] = useState('first.embroidery2019@gmail.com');
   const [footerText, setFooterText] = useState(`© ${new Date().getFullYear()} First Embroidery 初刺. All rights reserved.`);
 
   useEffect(() => {
@@ -15,10 +15,10 @@ export default function Footer() {
         if (!res.ok) throw new Error('Fetch failed');
         const data = await res.json();
         
-        if (data.footer_address) setAddress(data.footer_address);
-        if (data.footer_phone) setPhone(data.footer_phone);
-        if (data.footer_email) setEmail(data.footer_email);
-        if (data.footer_text) setFooterText(data.footer_text);
+        if (data.footer_address !== null && data.footer_address !== undefined) setAddress(data.footer_address);
+        if (data.footer_phone !== null && data.footer_phone !== undefined) setPhone(data.footer_phone);
+        if (data.footer_email !== null && data.footer_email !== undefined) setEmail(data.footer_email);
+        if (data.footer_text !== null && data.footer_text !== undefined) setFooterText(data.footer_text);
       } catch (err) {
         console.error('Failed to fetch footer content', err);
       }
