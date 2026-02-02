@@ -283,7 +283,7 @@ export default function AdminPage() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-surface">
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-transparent">
         {/* Abstract Background Decoration */}
         <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
         <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -326,7 +326,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen pb-20 selection:bg-secondary/30 bg-surface relative overflow-hidden">
+    <div className="min-h-screen pb-20 selection:bg-secondary/30 bg-transparent relative overflow-hidden">
       {/* Background Decorations */}
       <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
