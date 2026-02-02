@@ -36,6 +36,12 @@ export default function AdminPage() {
 
   // Site Content State
   const [siteContent, setSiteContent] = useState<any>({ 
+    header_brand: '',
+    header_nav_about: '',
+    header_nav_workshop: '',
+    header_nav_gallery: '',
+    header_nav_kits: '',
+    header_button_text: '',
     hero_title: '', 
     about_bio: '', 
     footer_text: '',
@@ -95,7 +101,7 @@ export default function AdminPage() {
   const fetchContent = async () => {
     const res = await fetch('/api/content');
     const data = await res.json();
-    if (data && !data.error) setSiteContent(data);
+    if (data && !data.error) setSiteContent((prev: any) => ({ ...prev, ...data }));
   };
 
   const handleLogin = (e: React.FormEvent) => {
@@ -410,12 +416,20 @@ export default function AdminPage() {
                     <Label>選擇分類</Label>
                     <select
                       value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      onChange={(e) => {
+                        if (e.target.value === 'add_new') {
+                          setShowCatModal(true);
+                        } else {
+                          setSelectedCategory(e.target.value);
+                        }
+                      }}
                       className="w-full p-4 bg-secondary/10 border border-secondary/20 rounded-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all text-primary font-medium appearance-none cursor-pointer"
                     >
+                      <option value="" disabled>選擇分類</option>
                       {categories.map(cat => (
                         <option key={cat.id} value={cat.slug}>{cat.name}</option>
                       ))}
+                      <option value="add_new" className="text-secondary font-bold">+ 新增分類...</option>
                     </select>
                   </div>
 
@@ -616,6 +630,68 @@ export default function AdminPage() {
             
             <Card className="p-10 border border-white/40 shadow-2xl">
               <form onSubmit={handleContentSubmit} className="space-y-10">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Header Section (頂部導航)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label>品牌名稱 (Brand Name)</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_brand || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_brand: e.target.value})}
+                        placeholder="例如：First Embroidery 初刺"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>按鈕文字 (Button Text)</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_button_text || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_button_text: e.target.value})}
+                        placeholder="例如：Book Now"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="space-y-3">
+                      <Label>About 連結文字</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_nav_about || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_nav_about: e.target.value})}
+                        placeholder="About"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>Workshop 連結文字</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_nav_workshop || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_nav_workshop: e.target.value})}
+                        placeholder="Workshop"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>Gallery 連結文字</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_nav_gallery || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_nav_gallery: e.target.value})}
+                        placeholder="Gallery"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>Kits 連結文字</Label>
+                      <Input 
+                        type="text" 
+                        value={siteContent.header_nav_kits || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, header_nav_kits: e.target.value})}
+                        placeholder="Kits"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-primary/80 border-b border-secondary/20 pb-2">Hero Section</h3>
                   <div className="space-y-3">
