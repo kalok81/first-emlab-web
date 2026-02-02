@@ -14,6 +14,11 @@ export async function GET() {
 
 export async function DELETE(request: Request) {
   try {
+    const auth = request.headers.get('Authorization');
+    if (auth !== 'admin') {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     if (!id) return Response.json({ error: 'Missing id' }, { status: 400 });

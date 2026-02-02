@@ -4,6 +4,11 @@ export const runtime = 'edge';
 
 export async function POST(request: Request) {
   try {
+    const auth = request.headers.get('Authorization');
+    if (auth !== 'admin') {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { category, image_data } = await request.json();
 
     if (!image_data) {

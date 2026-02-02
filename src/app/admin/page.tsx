@@ -68,7 +68,7 @@ export default function AdminPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'emlab2025') {
+    if (password === 'admin') {
       setIsLoggedIn(true);
     } else {
       alert('密碼錯誤');
@@ -104,7 +104,10 @@ export default function AdminPage() {
         const base64data = reader.result;
         const res = await fetch('/api/admin/upload', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': password
+          },
           body: JSON.stringify({ category: selectedCategory, image_data: base64data }),
         });
         if (res.ok) {
@@ -126,7 +129,10 @@ export default function AdminPage() {
 
   const handleDeleteWork = async (id: number) => {
     if (!confirm('確定要刪除此作品嗎？')) return;
-    const res = await fetch(`/api/works?id=${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/works?id=${id}`, { 
+      method: 'DELETE',
+      headers: { 'Authorization': password }
+    });
     if (res.ok) fetchWorks();
   };
 
@@ -145,7 +151,10 @@ export default function AdminPage() {
     const method = workshopModal.mode === 'add' ? 'POST' : 'PUT';
     const res = await fetch('/api/workshops', {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
       body: JSON.stringify(wsFormData),
     });
     if (res.ok) {
@@ -158,7 +167,10 @@ export default function AdminPage() {
 
   const handleDeleteWorkshop = async (id: number) => {
     if (!confirm('確定要刪除此課程嗎？')) return;
-    const res = await fetch(`/api/workshops?id=${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/workshops?id=${id}`, { 
+      method: 'DELETE',
+      headers: { 'Authorization': password }
+    });
     if (res.ok) fetchWorkshops();
   };
 
@@ -168,7 +180,10 @@ export default function AdminPage() {
     setIsSavingContent(true);
     const res = await fetch('/api/content', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
       body: JSON.stringify(siteContent),
     });
     if (res.ok) {
@@ -183,7 +198,10 @@ export default function AdminPage() {
     e.preventDefault();
     const res = await fetch('/api/admin/categories', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
       body: JSON.stringify({ name: newCatName, slug: newCatSlug }),
     });
     if (res.ok) {
@@ -196,7 +214,10 @@ export default function AdminPage() {
 
   const handleDeleteCategory = async (id: number) => {
     if (!confirm('確定要刪除此分類嗎？')) return;
-    const res = await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/categories?id=${id}`, { 
+      method: 'DELETE',
+      headers: { 'Authorization': password }
+    });
     if (res.ok) fetchCategories();
   };
 
