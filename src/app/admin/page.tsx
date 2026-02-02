@@ -41,7 +41,9 @@ export default function AdminPage() {
     footer_text: '',
     footer_address: '',
     footer_phone: '',
-    footer_email: ''
+    footer_email: '',
+    footer_instagram: '',
+    footer_facebook: ''
   });
   const [isSavingContent, setIsSavingContent] = useState(false);
 
@@ -683,6 +685,29 @@ export default function AdminPage() {
                         value={siteContent.footer_email || ''} 
                         onChange={(e) => setSiteContent({...siteContent, footer_email: e.target.value})}
                         placeholder="聯絡 Email"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label>Instagram URL</Label>
+                      <Input 
+                        type="text" 
+                        name="footer_instagram"
+                        value={siteContent.footer_instagram || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, footer_instagram: e.target.value})}
+                        placeholder="Instagram 連結"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label>Facebook URL</Label>
+                      <Input 
+                        type="text" 
+                        name="footer_facebook"
+                        value={siteContent.footer_facebook || ''} 
+                        onChange={(e) => setSiteContent({...siteContent, footer_facebook: e.target.value})}
+                        placeholder="Facebook 連結"
                       />
                     </div>
                   </div>

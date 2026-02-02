@@ -6,6 +6,8 @@ export default function Footer() {
   const [address, setAddress] = useState('觀塘興業街 (請至後台更新)');
   const [phone, setPhone] = useState('WhatsApp 查詢');
   const [email, setEmail] = useState('first.embroidery2019@gmail.com');
+  const [instagram, setInstagram] = useState('https://instagram.com/first.embroidery');
+  const [facebook, setFacebook] = useState('https://facebook.com/first.embroidery');
   const [footerText, setFooterText] = useState(`© ${new Date().getFullYear()} First Embroidery 初刺. All rights reserved.`);
 
   useEffect(() => {
@@ -18,6 +20,8 @@ export default function Footer() {
         if (data.footer_address !== null && data.footer_address !== undefined) setAddress(data.footer_address);
         if (data.footer_phone !== null && data.footer_phone !== undefined) setPhone(data.footer_phone);
         if (data.footer_email !== null && data.footer_email !== undefined) setEmail(data.footer_email);
+        if (data.footer_instagram !== null && data.footer_instagram !== undefined) setInstagram(data.footer_instagram);
+        if (data.footer_facebook !== null && data.footer_facebook !== undefined) setFacebook(data.footer_facebook);
         if (data.footer_text !== null && data.footer_text !== undefined) setFooterText(data.footer_text);
       } catch (err) {
         console.error('Failed to fetch footer content', err);
@@ -41,7 +45,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="space-y-6">
-            <h4 className="text-sm uppercase tracking-widest font-bold text-secondary">探索課程</h4>
+            <h4 className="text-sm uppercase tracking-widest font-bold text-secondary">快速連結</h4>
             <ul className="space-y-3 text-sm font-light">
               <li><a href="/workshop" className="opacity-70 hover:opacity-100 hover:text-secondary transition-all">工作坊 Workshops</a></li>
               <li><a href="/works" className="opacity-70 hover:opacity-100 hover:text-secondary transition-all">作品集 Gallery</a></li>
@@ -50,12 +54,18 @@ export default function Footer() {
             </ul>
           </div>
           <div className="space-y-6">
-            <h4 className="text-sm uppercase tracking-widest font-bold text-secondary">聯絡我們</h4>
+            <h4 className="text-sm uppercase tracking-widest font-bold text-secondary">關注我們</h4>
             <ul className="space-y-3 text-sm font-light">
               <li>
-                <a href="https://instagram.com/first.embroidery" target="_blank" className="opacity-70 hover:opacity-100 flex items-center gap-2 group">
+                <a href={instagram} target="_blank" className="opacity-70 hover:opacity-100 flex items-center gap-2 group">
                   <span className="w-5 h-0.5 bg-secondary/30 group-hover:w-8 transition-all"></span>
                   Instagram
+                </a>
+              </li>
+              <li>
+                <a href={facebook} target="_blank" className="opacity-70 hover:opacity-100 flex items-center gap-2 group">
+                  <span className="w-5 h-0.5 bg-secondary/30 group-hover:w-8 transition-all"></span>
+                  Facebook
                 </a>
               </li>
               <li>
