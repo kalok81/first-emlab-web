@@ -21,7 +21,7 @@ export default function AdminPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [newCatName, setNewCatName] = useState('');
-  const [newCatSlug, setNewCatSlug] = useState('');
+  const [editingCat, setEditingCat] = useState<{ id: number, name: string } | null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
 
   // Workshops State
@@ -279,18 +279,33 @@ export default function AdminPage() {
         'Content-Type': 'application/json',
         'Authorization': password
       },
-      body: JSON.stringify({ name: newCatName, slug: newCatSlug }),
+      body: JSON.stringify({ name: newCatName }),
     });
     if (res.ok) {
       setNewCatName('');
-      setNewCatSlug('');
       fetchCategories();
-      setShowCatModal(false);
+    }
+  };
+
+  const handleUpdateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCat) return;
+    const res = await fetch('/api/admin/categories', {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
+      body: JSON.stringify({ id: editingCat.id, name: editingCat.name }),
+    });
+    if (res.ok) {
+      setEditingCat(null);
+      fetchCategories();
     }
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (!confirm('確定要刪除此分類嗎？')) return;
+    if (!confirm('確定要刪除此分類嗎？注意：刪除分類可能導致該分類下的作品無法正常顯示。')) return;
     const res = await fetch(`/api/admin/categories?id=${id}`, { 
       method: 'DELETE',
       headers: { 'Authorization': password }
@@ -902,19 +917,43 @@ export default function AdminPage() {
                 <h3 className="font-bold text-2xl text-primary">分類管理</h3>
                 <p className="text-xs text-primary/40 font-bold uppercase tracking-widest mt-1">Organize your works</p>
               </div>
-              <button onClick={() => setShowCatModal(false)} className="bg-white p-2 rounded-full shadow-sm text-primary/40 hover:text-highlight transition-colors"><X className="w-6 h-6" /></button>
+              <button onClick={() => { setShowCatModal(false); setEditingCat(null); }} className="bg-white p-2 rounded-full shadow-sm text-primary/40 hover:text-highlight transition-colors"><X className="w-6 h-6" /></button>
             </div>
             <div className="p-8 space-y-8">
-              <form onSubmit={handleAddCategory} className="space-y-4 bg-secondary/5 p-6 rounded-3xl border border-secondary/20">
-                <Label>新增分類</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input type="text" value={newCatName} onChange={(e) => setNewCatName(e.target.value)} placeholder="名稱 (如: 陶藝)" required />
-                  <Input type="text" value={newCatSlug} onChange={(e) => setNewCatSlug(e.target.value)} placeholder="Slug (如: pottery)" required />
-                </div>
-                <Button type="submit" className="w-full shadow-none" size="md">
-                  <Plus className="w-4 h-4 mr-1" /> 新增
-                </Button>
-              </form>
+              {editingCat ? (
+                <form onSubmit={handleUpdateCategory} className="space-y-4 bg-primary/5 p-6 rounded-3xl border border-primary/20">
+                  <Label>編輯分類</Label>
+                  <div className="flex gap-4">
+                    <Input 
+                      type="text" 
+                      value={editingCat.name} 
+                      onChange={(e) => setEditingCat({...editingCat, name: e.target.value})} 
+                      placeholder="分類名稱" 
+                      required 
+                      className="flex-grow"
+                    />
+                    <Button type="submit" className="shadow-none px-6" size="md">儲存</Button>
+                    <Button type="button" variant="secondary" onClick={() => setEditingCat(null)} className="shadow-none px-6" size="md">取消</Button>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleAddCategory} className="space-y-4 bg-secondary/5 p-6 rounded-3xl border border-secondary/20">
+                  <Label>新增分類</Label>
+                  <div className="flex gap-4">
+                    <Input 
+                      type="text" 
+                      value={newCatName} 
+                      onChange={(e) => setNewCatName(e.target.value)} 
+                      placeholder="名稱 (如: 陶藝)" 
+                      required 
+                      className="flex-grow"
+                    />
+                    <Button type="submit" className="shadow-none px-6" size="md">
+                      <Plus className="w-4 h-4 mr-1" /> 新增
+                    </Button>
+                  </div>
+                </form>
+              )}
 
               <div className="space-y-3">
                 <Label>現有分類</Label>
@@ -925,9 +964,22 @@ export default function AdminPage() {
                         <div className="font-bold text-primary">{cat.name}</div>
                         <div className="text-[10px] text-primary/30 font-black uppercase tracking-widest">{cat.slug}</div>
                       </div>
-                      <button onClick={() => handleDeleteCategory(cat.id)} className="text-primary/20 hover:text-highlight p-2 transition-colors">
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                      <div className="flex gap-1">
+                        <button 
+                          onClick={() => setEditingCat({ id: cat.id, name: cat.name })} 
+                          className="text-primary/20 hover:text-primary p-2 transition-colors"
+                          title="編輯"
+                        >
+                          <Edit2 className="w-5 h-5" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteCategory(cat.id)} 
+                          className="text-primary/20 hover:text-highlight p-2 transition-colors"
+                          title="刪除"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

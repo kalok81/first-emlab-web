@@ -20,12 +20,39 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, slug } = await request.json();
-    if (!name || !slug) return Response.json({ error: 'Missing name or slug' }, { status: 400 });
+    const { name, slug: providedSlug } = await request.json();
+    if (!name) return Response.json({ error: 'Missing name' }, { status: 400 });
+
+    // Generate slug from name if not provided
+    const slug = providedSlug || name.toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
 
     const db = getRequestContext().env.DB;
     await db.prepare('INSERT INTO categories (name, slug) VALUES (?, ?)')
       .bind(name, slug)
+      .run();
+    return Response.json({ success: true });
+  } catch (error: any) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const auth = request.headers.get('Authorization');
+    if (auth !== 'admin') {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id, name } = await request.json();
+    if (!id || !name) return Response.json({ error: 'Missing id or name' }, { status: 400 });
+
+    const db = getRequestContext().env.DB;
+    await db.prepare('UPDATE categories SET name = ? WHERE id = ?')
+      .bind(name, id)
       .run();
     return Response.json({ success: true });
   } catch (error: any) {
