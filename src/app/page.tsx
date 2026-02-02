@@ -34,13 +34,13 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative text-center text-white p-6">
           <h1 className="text-4xl md:text-6xl mb-6 tracking-widest drop-shadow-lg">
-            {content.hero_title || '學會刺繡，也學會過溫暖的日子'}
+            {content.hero_title || '學會刺繡，也學會溫柔地過日子'}
           </h1>
           <p className="text-lg md:text-xl font-light opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed">
             在大忙的世界裡，找回指尖上的安靜時光
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Link href="/workshop" className="bg-white text-foreground px-8 py-3 rounded-full font-medium hover:bg-accent hover:text-white transition-all shadow-xl">
+            <Link href="/workshop" className="bg-primary text-white px-8 py-3 rounded-full font-medium hover:bg-accent transition-all shadow-xl">
               探索工作坊
             </Link>
             <Link href="/works" className="bg-transparent border border-white text-white px-8 py-3 rounded-full font-medium hover:bg-white/10 backdrop-blur-sm transition-all shadow-xl">
