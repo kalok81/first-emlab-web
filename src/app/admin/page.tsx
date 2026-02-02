@@ -320,6 +320,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteCategory = async (id: number) => {
+    if (!confirm('確定要刪除此分類嗎？這不會刪除分類下的作品，但作品將失去分類。')) return;
+    const res = await fetch(`/api/admin/categories?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': password }
+    });
+    if (res.ok) {
+      fetchCategories();
+      fetchWorks(); // Refresh works just in case
+    } else {
+      const err = await res.json();
+      alert(err.error || '刪除失敗');
+    }
+  };
+
   const handleImageSelect = (url: string) => {
     if (!pickerConfig) return;
     

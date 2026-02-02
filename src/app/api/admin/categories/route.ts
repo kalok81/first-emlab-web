@@ -80,10 +80,15 @@ export async function DELETE(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    if (!id) return Response.json({ error: 'Missing id' }, { status: 400 });
+    const slug = searchParams.get('slug');
+    if (!id && !slug) return Response.json({ error: 'Missing id or slug' }, { status: 400 });
 
     const db = getRequestContext().env.DB;
-    await db.prepare('DELETE FROM categories WHERE id = ?').bind(id).run();
+    if (id) {
+      await db.prepare('DELETE FROM categories WHERE id = ?').bind(id).run();
+    } else {
+      await db.prepare('DELETE FROM categories WHERE slug = ?').bind(slug).run();
+    }
     return Response.json({ success: true });
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 500 });
