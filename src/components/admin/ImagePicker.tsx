@@ -5,7 +5,7 @@ import { X, Image as ImageIcon, Loader2, Search } from 'lucide-react';
 import { Button, Card, Input } from '@/components/AdminUI';
 
 interface ImagePickerProps {
-  onSelect: (url: string) => void;
+  onSelect: (work: any) => void;
   onClose: () => void;
 }
 
@@ -73,7 +73,7 @@ export default function ImagePicker({ onSelect, onClose }: ImagePickerProps) {
               {filteredWorks.map((work) => (
                 <div 
                   key={work.id} 
-                  onClick={() => onSelect(work.image_data)}
+                  onClick={() => onSelect(work)}
                   className="group relative aspect-square rounded-2xl overflow-hidden bg-secondary/10 cursor-pointer border-2 border-transparent hover:border-primary transition-all"
                 >
                   <img 

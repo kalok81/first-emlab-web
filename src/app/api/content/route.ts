@@ -1,6 +1,7 @@
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 import { getRequestContext } from '@cloudflare/next-on-pages';
+import { verifyAuth } from '@/lib/auth';
 
 
 export async function GET() {
@@ -20,8 +21,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const auth = request.headers.get('Authorization');
-    if (auth !== 'admin') {
+    if (!(await verifyAuth(request))) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

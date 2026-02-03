@@ -26,16 +26,21 @@ export default function AdminPage() {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [editingCat, setEditingCat] = useState<{ id: number, name: string } | null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
+  
+  // Password State
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   // Workshops State
   const [workshops, setWorkshops] = useState<any[]>([]);
   const [workshopModal, setWorkshopModal] = useState<{ show: boolean, mode: 'add' | 'edit', data?: any }>({ show: false, mode: 'add' });
-  const [wsFormData, setWsFormData] = useState({ id: null, title: '', description: '', price: '', duration: '', image_url: '', form_url: '' });
+  const [wsFormData, setWsFormData] = useState({ id: null, title: '', description: '', price: '', duration: '', image_url: '', work_id: null as number | null, form_url: '' });
 
   // Kits State
   const [products, setProducts] = useState<any[]>([]);
   const [productModal, setProductModal] = useState<{ show: boolean, mode: 'add' | 'edit', data?: any }>({ show: false, mode: 'add' });
-  const [productFormData, setProductFormData] = useState({ id: null, title: '', price: '', description: '', image_url: '', buy_link: '' });
+  const [productFormData, setProductFormData] = useState({ id: null, title: '', price: '', description: '', image_url: '', work_id: null as number | null, buy_link: '' });
 
   // Site Content State
   const [siteContent, setSiteContent] = useState<any>({ 
@@ -60,8 +65,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     const savedToken = localStorage.getItem('admin_token');
-    if (savedToken === 'admin') {
-      setPassword('admin');
+    if (savedToken) {
+      setPassword(savedToken);
       setIsLoggedIn(true);
     }
   }, []);
@@ -109,10 +114,17 @@ export default function AdminPage() {
     if (data && !data.error) setSiteContent((prev: any) => ({ ...prev, ...data }));
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'admin') {
-      localStorage.setItem('admin_token', 'admin');
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem('admin_token', data.token);
       setIsLoggedIn(true);
     } else {
       alert('密碼錯誤');
@@ -223,9 +235,18 @@ export default function AdminPage() {
   const openWorkshopModal = (mode: 'add' | 'edit', data?: any) => {
     setWorkshopModal({ show: true, mode, data });
     if (mode === 'edit' && data) {
-      setWsFormData(data);
+      setWsFormData({
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        duration: data.duration,
+        image_url: data.image_url || data.work_image,
+        work_id: data.work_id,
+        form_url: data.form_url
+      });
     } else {
-      setWsFormData({ id: null, title: '', description: '', price: '', duration: '', image_url: '', form_url: '' });
+      setWsFormData({ id: null, title: '', description: '', price: '', duration: '', image_url: '', work_id: null, form_url: '' });
     }
   };
 
@@ -261,9 +282,17 @@ export default function AdminPage() {
   const openProductModal = (mode: 'add' | 'edit', data?: any) => {
     setProductModal({ show: true, mode, data });
     if (mode === 'edit' && data) {
-      setProductFormData(data);
+      setProductFormData({
+        id: data.id,
+        title: data.title,
+        price: data.price,
+        description: data.description,
+        image_url: data.image_url || data.work_image,
+        work_id: data.work_id,
+        buy_link: data.buy_link
+      });
     } else {
-      setProductFormData({ id: null, title: '', price: '', description: '', image_url: '', buy_link: '' });
+      setProductFormData({ id: null, title: '', price: '', description: '', image_url: '', work_id: null, buy_link: '' });
     }
   };
 
@@ -376,14 +405,47 @@ export default function AdminPage() {
     }
   };
 
-  const handleImageSelect = (url: string) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminPassword) return;
+    setIsChangingPassword(true);
+    try {
+      const res = await fetch('/api/admin/password', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': password
+        },
+        body: JSON.stringify({ newPassword: newAdminPassword }),
+      });
+      if (res.ok) {
+        alert('密碼修改成功，請重新登入');
+        localStorage.removeItem('admin_token');
+        setIsLoggedIn(false);
+        setPassword('');
+        setShowPasswordModal(false);
+        setNewAdminPassword('');
+      } else {
+        const err = await res.json();
+        alert(err.error || '修改失敗');
+      }
+    } catch (error) {
+      alert('發生錯誤');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleImageSelect = (work: any) => {
     if (!pickerConfig) return;
     
     const { target } = pickerConfig;
+    const url = work.image_data;
+
     if (target === 'workshop') {
-      setWsFormData(prev => ({ ...prev, image_url: url }));
+      setWsFormData(prev => ({ ...prev, image_url: url, work_id: work.id }));
     } else if (target === 'product') {
-      setProductFormData(prev => ({ ...prev, image_url: url }));
+      setProductFormData(prev => ({ ...prev, image_url: url, work_id: work.id }));
     } else {
       setSiteContent((prev: any) => ({ ...prev, [target]: url }));
     }
@@ -485,17 +547,26 @@ export default function AdminPage() {
               </nav>
             </div>
 
-            <button 
-              onClick={() => {
-                localStorage.removeItem('admin_token');
-                setIsLoggedIn(false);
-                setPassword('');
-              }}
-              className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-highlight flex items-center gap-2 transition-all hover:scale-105 active:scale-95 mr-2"
-            >
-              <LogOut className="w-4 h-4" /> 
-              <span className="hidden md:inline">安全登出</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setShowPasswordModal(true)}
+                className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-primary flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+              >
+                <Settings className="w-4 h-4" /> 
+                <span className="hidden md:inline">修改密碼</span>
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('admin_token');
+                  setIsLoggedIn(false);
+                  setPassword('');
+                }}
+                className="px-4 py-2 text-sm font-bold text-primary/40 hover:text-highlight flex items-center gap-2 transition-all hover:scale-105 active:scale-95 mr-2"
+              >
+                <LogOut className="w-4 h-4" /> 
+                <span className="hidden md:inline">安全登出</span>
+              </button>
+            </div>
           </Card>
         </div>
       </header>
@@ -1200,6 +1271,39 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
+          </Card>
+        </div>
+      )}
+
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-primary/20 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <Card className="w-full max-w-md !p-0 overflow-hidden shadow-2xl border border-white/40 animate-in zoom-in slide-in-from-bottom-8 duration-500">
+            <div className="p-8 border-b border-secondary/20 flex justify-between items-center bg-secondary/5">
+              <div>
+                <h3 className="font-bold text-2xl text-primary">修改管理密碼</h3>
+                <p className="text-xs text-primary/40 font-bold uppercase tracking-widest mt-1">Admin Security</p>
+              </div>
+              <button onClick={() => setShowPasswordModal(false)} className="bg-white p-2 rounded-full shadow-sm text-primary/40 hover:text-highlight transition-colors"><X className="w-6 h-6" /></button>
+            </div>
+            <form onSubmit={handlePasswordChange} className="p-8 space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>新密碼</Label>
+                  <Input 
+                    type="password" 
+                    value={newAdminPassword} 
+                    onChange={(e) => setNewAdminPassword(e.target.value)} 
+                    placeholder="輸入新密碼" 
+                    required 
+                  />
+                </div>
+                <p className="text-[10px] text-primary/40 italic">* 修改後將會自動登出，需使用新密碼重新登入。</p>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <Button type="button" variant="secondary" onClick={() => setShowPasswordModal(false)} className="flex-1">取消</Button>
+                <Button type="submit" isLoading={isChangingPassword} className="flex-[2]">確認修改</Button>
+              </div>
+            </form>
           </Card>
         </div>
       )}

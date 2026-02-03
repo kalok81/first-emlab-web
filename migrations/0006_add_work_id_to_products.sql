@@ -1,0 +1,2 @@
+ALTER TABLE products ADD COLUMN work_id INTEGER REFERENCES works(id);
+ALTER TABLE workshops ADD COLUMN work_id INTEGER REFERENCES works(id);
