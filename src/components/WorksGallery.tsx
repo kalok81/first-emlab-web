@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 type WorkItem = {
   src: string;
@@ -14,13 +15,24 @@ type Category = {
   value: string;
 };
 
-export default function WorksGallery({ works, categories }: { works: WorkItem[], categories: Category[] }) {
+function WorksGalleryContent({ works, categories }: { works: WorkItem[], categories: Category[] }) {
   const [activeCategory, setActiveCategory] = useState('全部');
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
 
   const filterOptions = [
     { label: '全部', value: '全部' },
     ...categories
   ];
+
+  useEffect(() => {
+    if (categoryParam) {
+      const match = filterOptions.find(o => o.value.toLowerCase() === categoryParam.toLowerCase());
+      if (match) {
+        setActiveCategory(match.value);
+      }
+    }
+  }, [categoryParam, categories]);
 
   const filteredWorks = activeCategory === '全部' 
     ? works 
@@ -86,5 +98,13 @@ export default function WorksGallery({ works, categories }: { works: WorkItem[],
         </div>
       )}
     </section>
+  );
+}
+
+export default function WorksGallery(props: { works: WorkItem[], categories: Category[] }) {
+  return (
+    <Suspense fallback={<div className="py-24 text-center opacity-50">Loading gallery...</div>}>
+      <WorksGalleryContent {...props} />
+    </Suspense>
   );
 }

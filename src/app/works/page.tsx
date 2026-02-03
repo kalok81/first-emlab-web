@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WorksGallery from '@/components/WorksGallery';
@@ -43,7 +44,9 @@ export default async function Works() {
         <p className="opacity-60 text-lg">每一針，都記錄著溫慢的時光</p>
       </section>
 
-      <WorksGallery works={works} categories={categories} />
+      <Suspense fallback={<div className="py-24 text-center opacity-50">Loading gallery...</div>}>
+        <WorksGallery works={works} categories={categories} />
+      </Suspense>
 
       <Footer />
     </main>
