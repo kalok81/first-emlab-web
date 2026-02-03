@@ -27,9 +27,14 @@ function WorksGalleryContent({ works, categories }: { works: WorkItem[], categor
 
   useEffect(() => {
     if (categoryParam) {
-      const match = filterOptions.find(o => o.value.toLowerCase() === categoryParam.toLowerCase());
-      if (match) {
-        setActiveCategory(match.value);
+      try {
+        const decodedParam = decodeURIComponent(categoryParam);
+        const match = filterOptions.find(o => o.value.toLowerCase() === decodedParam.toLowerCase());
+        if (match) {
+          setActiveCategory(match.value);
+        }
+      } catch (e) {
+        console.error('Failed to decode category param:', e);
       }
     }
   }, [categoryParam, categories]);
