@@ -135,38 +135,77 @@ export default function AdminPage() {
     multiple: false
   });
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          const MAX_WIDTH = 800;
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+          resolve(compressedBase64);
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!image) return;
     setIsUploading(true);
-    setMessage('正在上傳...');
+    setMessage('正在壓縮並上傳...');
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      reader.onloadend = async () => {
-        const base64data = reader.result;
-        const res = await fetch('/api/admin/upload', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': password
-          },
-          body: JSON.stringify({ category: selectedCategory, image_data: base64data }),
-        });
-        if (res.ok) {
-          setMessage('上傳成功！');
-          setImage(null);
-          setPreview(null);
-          fetchWorks();
-          setTimeout(() => setMessage(''), 3000);
-        } else {
-          setMessage('上傳失敗');
-        }
+      const compressedBase64 = await compressImage(image);
+      
+      // Base64 size check (approximate 500KB)
+      if (compressedBase64.length > 500 * 1024) {
+        setMessage('圖片壓縮後仍然過大 (>500KB)，請先手動縮小圖片');
         setIsUploading(false);
-      };
-    } catch (error) {
-      setMessage('發生錯誤');
+        return;
+      }
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': password
+        },
+        body: JSON.stringify({ category: selectedCategory, image_data: compressedBase64 }),
+      });
+      
+      const result = await res.json();
+      
+      if (res.ok) {
+        setMessage('上傳成功！');
+        setImage(null);
+        setPreview(null);
+        fetchWorks();
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage(`上傳失敗: ${result.error || 'Payload Too Large'}`);
+      }
+    } catch (error: any) {
+      setMessage(`發生錯誤: ${error.message || '未知錯誤'}`);
+    } finally {
       setIsUploading(false);
     }
   };
