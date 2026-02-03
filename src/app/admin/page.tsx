@@ -1226,15 +1226,6 @@ export default function AdminPage() {
                 <form onSubmit={handleUpdateCategory} className="space-y-4 bg-primary/5 p-6 rounded-3xl border border-primary/20">
                   <div className="flex justify-between items-center mb-2">
                     <Label className="mb-0">編輯分類</Label>
-                    <label className="flex items-center gap-2 cursor-pointer group">
-                      <span className="text-xs font-bold text-primary/60 group-hover:text-primary transition-colors">隱藏分類</span>
-                      <input 
-                        type="checkbox" 
-                        checked={editingCat.is_hidden} 
-                        onChange={(e) => setEditingCat({...editingCat, is_hidden: e.target.checked})}
-                        className="w-4 h-4 rounded border-secondary/30 text-primary focus:ring-primary/20"
-                      />
-                    </label>
                   </div>
                   <div className="flex gap-4">
                     <Input 
@@ -1253,15 +1244,6 @@ export default function AdminPage() {
                 <form onSubmit={handleAddCategory} className="space-y-4 bg-secondary/5 p-6 rounded-3xl border border-secondary/20">
                   <div className="flex justify-between items-center mb-2">
                     <Label className="mb-0">新增分類</Label>
-                    <label className="flex items-center gap-2 cursor-pointer group">
-                      <span className="text-xs font-bold text-primary/60 group-hover:text-primary transition-colors">隱藏分類</span>
-                      <input 
-                        type="checkbox" 
-                        checked={newCatIsHidden} 
-                        onChange={(e) => setNewCatIsHidden(e.target.checked)}
-                        className="w-4 h-4 rounded border-secondary/30 text-primary focus:ring-primary/20"
-                      />
-                    </label>
                   </div>
                   <div className="flex gap-4">
                     <Input 
