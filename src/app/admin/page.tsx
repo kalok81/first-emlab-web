@@ -487,7 +487,7 @@ export default function AdminPage() {
               <Heart className="text-secondary w-10 h-10" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab CMS v3.9.1</h1>
+          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab CMS v3.9.2</h1>
           <p className="text-primary/60 text-sm mb-10 italic">"Creating with heart, living with grace."</p>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -511,7 +511,7 @@ export default function AdminPage() {
           </form>
           
           <p className="mt-12 text-[10px] text-primary/30 uppercase tracking-[0.2em]">
-            Admin Control Panel v3.9.1 • Cache Buster
+            Admin Control Panel v3.9.2 • Cache Buster
           </p>
         </Card>
       </div>
@@ -539,7 +539,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <span className="font-bold text-lg text-primary tracking-tight block leading-none">EM Lab</span>
-                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin CMS v3.9.1</span>
+                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin CMS v3.9.2</span>
               </div>
             </div>
 
