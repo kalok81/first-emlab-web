@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, slug: providedSlug } = await request.json();
+    const { name, slug: providedSlug, is_hidden } = await request.json();
     if (!name) return Response.json({ error: 'Missing name' }, { status: 400 });
 
     // Generate slug from name if not provided
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
       counter++;
     }
 
-    await db.prepare('INSERT INTO categories (name, slug) VALUES (?, ?)')
-      .bind(name, finalSlug)
+    await db.prepare('INSERT INTO categories (name, slug, is_hidden) VALUES (?, ?, ?)')
+      .bind(name, finalSlug, is_hidden ? 1 : 0)
       .run();
     return Response.json({ success: true, slug: finalSlug });
   } catch (error: any) {
@@ -61,12 +61,12 @@ export async function PUT(request: Request) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, name } = await request.json();
+    const { id, name, is_hidden } = await request.json();
     if (!id || !name) return Response.json({ error: 'Missing id or name' }, { status: 400 });
 
     const db = getRequestContext().env.DB;
-    await db.prepare('UPDATE categories SET name = ? WHERE id = ?')
-      .bind(name, id)
+    await db.prepare('UPDATE categories SET name = ?, is_hidden = ? WHERE id = ?')
+      .bind(name, is_hidden ? 1 : 0, id)
       .run();
     return Response.json({ success: true });
   } catch (error: any) {

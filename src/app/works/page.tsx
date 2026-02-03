@@ -14,15 +14,27 @@ export default async function Works() {
   // For this D1 CMS, we'll focus on D1 data.
 
   let d1Works: any[] = [];
+  let d1Categories: any[] = [];
   try {
     const db = getRequestContext().env.DB;
+    
+    // Fetch categories first to know which ones are hidden
+    const catResults = await db.prepare('SELECT name, slug, is_hidden FROM categories').all();
+    d1Categories = catResults.results;
+    
+    const hiddenSlugs = new Set(d1Categories.filter(c => c.is_hidden).map(c => c.name));
+
     const { results } = await db.prepare('SELECT * FROM works ORDER BY created_at DESC').all();
-    d1Works = results.map(w => ({
-      src: w.image_data,
-      category: w.category,
-      title: `作品 #${w.id}`,
-      date: w.created_at,
-    }));
+    
+    // Filter out works belonging to hidden categories
+    d1Works = (results as any[])
+      .filter(w => !hiddenSlugs.has(w.category))
+      .map(w => ({
+        src: w.image_data,
+        category: w.category,
+        title: `作品 #${w.id}`,
+        date: w.created_at,
+      }));
   } catch (e) {
     console.error('D1 fetch failed:', e);
   }
@@ -30,11 +42,18 @@ export default async function Works() {
   // To avoid breaking existing site if D1 is empty, we can try to merge or just use D1
   const works = d1Works;
 
-  // Extract unique categories
-  const categories = Array.from(new Set(works.map((work) => work.category))).map((cat) => ({
-    label: cat.charAt(0).toUpperCase() + cat.slice(1),
-    value: cat,
-  }));
+  // Extract categories only from visible categories that actually have works
+  const visibleCategorySlugs = new Set(d1Categories.filter(c => !c.is_hidden).map(c => c.name));
+  
+  const categories = Array.from(new Set(works.map((work) => work.category)))
+    .filter(cat => visibleCategorySlugs.has(cat))
+    .map((cat) => {
+      const catInfo = d1Categories.find(c => c.name === cat);
+      return {
+        label: catInfo ? catInfo.name : cat.charAt(0).toUpperCase() + cat.slice(1),
+        value: cat,
+      };
+    });
 
   return (
     <main className="min-h-screen">

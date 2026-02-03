@@ -4,7 +4,7 @@ export const runtime = 'edge';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Trash2, Upload, LogOut, Plus, X, Image as ImageIcon, Loader2, Edit2, Settings, BookOpen, LayoutDashboard, Heart, Search } from 'lucide-react';
+import { Trash2, Upload, LogOut, Plus, X, Image as ImageIcon, Loader2, Edit2, Settings, BookOpen, LayoutDashboard, Heart, Search, Eye, EyeOff } from 'lucide-react';
 import { Button, Card, Input, Label } from '@/components/AdminUI';
 import ImagePicker from '@/components/admin/ImagePicker';
 
@@ -23,8 +23,9 @@ export default function AdminPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [newCatName, setNewCatName] = useState('');
+  const [newCatIsHidden, setNewCatIsHidden] = useState(false);
   const [isAddingCategory, setIsAddingCategory] = useState(false);
-  const [editingCat, setEditingCat] = useState<{ id: number, name: string } | null>(null);
+  const [editingCat, setEditingCat] = useState<{ id: number, name: string, is_hidden: boolean } | null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
   
   // Password State
@@ -356,10 +357,11 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
           'Authorization': password
         },
-        body: JSON.stringify({ name: newCatName }),
+        body: JSON.stringify({ name: newCatName, is_hidden: newCatIsHidden }),
       });
       if (res.ok) {
         setNewCatName('');
+        setNewCatIsHidden(false);
         await fetchCategories();
       } else {
         const err = await res.json();
@@ -382,10 +384,24 @@ export default function AdminPage() {
         'Content-Type': 'application/json',
         'Authorization': password
       },
-      body: JSON.stringify({ id: editingCat.id, name: editingCat.name }),
+      body: JSON.stringify({ id: editingCat.id, name: editingCat.name, is_hidden: editingCat.is_hidden }),
     });
     if (res.ok) {
       setEditingCat(null);
+      fetchCategories();
+    }
+  };
+
+  const toggleVisibility = async (cat: any) => {
+    const res = await fetch('/api/admin/categories', {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': password
+      },
+      body: JSON.stringify({ id: cat.id, name: cat.name, is_hidden: !cat.is_hidden }),
+    });
+    if (res.ok) {
       fetchCategories();
     }
   };
@@ -1208,7 +1224,18 @@ export default function AdminPage() {
             <div className="p-8 space-y-8">
               {editingCat ? (
                 <form onSubmit={handleUpdateCategory} className="space-y-4 bg-primary/5 p-6 rounded-3xl border border-primary/20">
-                  <Label>編輯分類</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="mb-0">編輯分類</Label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <span className="text-xs font-bold text-primary/60 group-hover:text-primary transition-colors">隱藏分類</span>
+                      <input 
+                        type="checkbox" 
+                        checked={editingCat.is_hidden} 
+                        onChange={(e) => setEditingCat({...editingCat, is_hidden: e.target.checked})}
+                        className="w-4 h-4 rounded border-secondary/30 text-primary focus:ring-primary/20"
+                      />
+                    </label>
+                  </div>
                   <div className="flex gap-4">
                     <Input 
                       type="text" 
@@ -1224,7 +1251,18 @@ export default function AdminPage() {
                 </form>
               ) : (
                 <form onSubmit={handleAddCategory} className="space-y-4 bg-secondary/5 p-6 rounded-3xl border border-secondary/20">
-                  <Label>新增分類</Label>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="mb-0">新增分類</Label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <span className="text-xs font-bold text-primary/60 group-hover:text-primary transition-colors">隱藏分類</span>
+                      <input 
+                        type="checkbox" 
+                        checked={newCatIsHidden} 
+                        onChange={(e) => setNewCatIsHidden(e.target.checked)}
+                        className="w-4 h-4 rounded border-secondary/30 text-primary focus:ring-primary/20"
+                      />
+                    </label>
+                  </div>
                   <div className="flex gap-4">
                     <Input 
                       type="text" 
@@ -1245,14 +1283,26 @@ export default function AdminPage() {
                 <Label>現有分類</Label>
                 <div className="divide-y divide-secondary/10 border border-secondary/20 rounded-[2rem] overflow-hidden max-h-64 overflow-y-auto bg-white/50">
                   {categories.map(cat => (
-                    <div key={cat.id} className="p-4 flex justify-between items-center hover:bg-white transition-colors">
-                      <div>
-                        <div className="font-bold text-primary">{cat.name}</div>
-                        <div className="text-[10px] text-primary/30 font-black uppercase tracking-widest">{cat.slug}</div>
+                    <div key={cat.id} className={`p-4 flex justify-between items-center hover:bg-white transition-colors ${cat.is_hidden ? 'opacity-60 bg-secondary/5' : ''}`}>
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <div className="font-bold text-primary flex items-center gap-2">
+                            {cat.name}
+                            {cat.is_hidden && <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Hidden</span>}
+                          </div>
+                          <div className="text-[10px] text-primary/30 font-black uppercase tracking-widest">{cat.slug}</div>
+                        </div>
                       </div>
                       <div className="flex gap-1">
                         <button 
-                          onClick={() => setEditingCat({ id: cat.id, name: cat.name })} 
+                          onClick={() => toggleVisibility(cat)} 
+                          className="text-primary/20 hover:text-primary p-2 transition-colors"
+                          title={cat.is_hidden ? "顯示" : "隱藏"}
+                        >
+                          {cat.is_hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                        <button 
+                          onClick={() => setEditingCat({ id: cat.id, name: cat.name, is_hidden: !!cat.is_hidden })} 
                           className="text-primary/20 hover:text-primary p-2 transition-colors"
                           title="編輯"
                         >
