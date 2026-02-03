@@ -92,8 +92,12 @@ export default function AdminPage() {
     const res = await fetch('/api/admin/categories');
     const data = await res.json();
     if (Array.isArray(data)) {
-      setCategories(data);
-      if (data.length > 0 && !selectedCategory) setSelectedCategory(data[0].name);
+      // Defensive cleanup: sometimes backend/seed data can contain a stray "0" category
+      const cleaned = data.filter((c: any) => c && typeof c.name === 'string' && c.name.trim() !== '' && c.name !== '0');
+      setCategories(cleaned);
+      if (cleaned.length > 0 && (!selectedCategory || selectedCategory === '0')) {
+        setSelectedCategory(cleaned[0].name);
+      }
     }
   };
 
@@ -487,7 +491,7 @@ export default function AdminPage() {
               <Heart className="text-secondary w-10 h-10" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab CMS v3.9.2</h1>
+          <h1 className="text-3xl font-bold mb-2 text-primary tracking-tight">EM Lab CMS v3.9.3</h1>
           <p className="text-primary/60 text-sm mb-10 italic">"Creating with heart, living with grace."</p>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -511,7 +515,7 @@ export default function AdminPage() {
           </form>
           
           <p className="mt-12 text-[10px] text-primary/30 uppercase tracking-[0.2em]">
-            Admin Control Panel v3.9.2 • Cache Buster
+            Admin Control Panel v3.9.3 • Cache Buster
           </p>
         </Card>
       </div>
@@ -539,7 +543,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <span className="font-bold text-lg text-primary tracking-tight block leading-none">EM Lab</span>
-                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin CMS v3.9.2</span>
+                <span className="text-[10px] text-primary/40 font-bold uppercase tracking-wider">Admin CMS v3.9.3</span>
               </div>
             </div>
 
