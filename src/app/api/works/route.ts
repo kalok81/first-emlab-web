@@ -6,7 +6,7 @@ import { getRequestContext } from '@cloudflare/next-on-pages';
 export async function GET() {
   try {
     const db = getRequestContext().env.DB;
-    const { results } = await db.prepare('SELECT * FROM works ORDER BY created_at DESC').all();
+    const { results } = await db.prepare('SELECT works.*, categories.name as category_name FROM works LEFT JOIN categories ON works.category = categories.id ORDER BY works.created_at DESC').all();
     return Response.json(results);
   } catch (error: any) {
     return Response.json({ error: error.message }, { status: 500 });
