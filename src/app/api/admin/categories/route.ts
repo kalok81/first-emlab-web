@@ -24,11 +24,15 @@ export async function POST(request: Request) {
     if (!name) return Response.json({ error: 'Missing name' }, { status: 400 });
 
     // Generate slug from name if not provided
-    let slug = providedSlug || name.toLowerCase()
+    // Support non-ASCII characters by using a safer slug generation or just the name
+    let slug = providedSlug || name
       .trim()
-      .replace(/[^\w\s-]/g, '')
+      .toLowerCase()
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
+
+    // If slug is empty (e.g. only symbols), use a default
+    if (!slug) slug = 'cat';
 
     const db = getRequestContext().env.DB;
 

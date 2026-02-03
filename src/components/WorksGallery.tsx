@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
 type WorkItem = {
   src: string;
@@ -56,13 +55,11 @@ export default function WorksGallery({ works, categories }: { works: WorkItem[],
           >
             <div className="jp-card mb-4 relative group">
               {work.src && (
-                <Image 
+                <img 
                   src={work.src} 
                   alt={work.title} 
-                  width={600}
-                  height={800}
-                  unoptimized
                   className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-110"
+                  loading="lazy"
                 />
               )}
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">

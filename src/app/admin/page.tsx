@@ -87,7 +87,7 @@ export default function AdminPage() {
     const data = await res.json();
     if (Array.isArray(data)) {
       setCategories(data);
-      if (data.length > 0 && !selectedCategory) setSelectedCategory(data[0].slug);
+      if (data.length > 0 && !selectedCategory) setSelectedCategory(data[0].name);
     }
   };
 
@@ -530,7 +530,7 @@ export default function AdminPage() {
                     >
                       <option value="" disabled>選擇分類</option>
                       {categories.map(cat => (
-                        <option key={cat.id} value={cat.slug}>{cat.name}</option>
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
                       ))}
                       <option value="add_new" className="text-secondary font-bold">+ 新增分類...</option>
                     </select>
@@ -591,7 +591,7 @@ export default function AdminPage() {
                       <div className="absolute bottom-6 left-6 right-6">
                         <div className="bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-lg border border-white/20 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                           <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{work.category}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">{work.category_name || work.category}</span>
                             <span className="text-[10px] font-bold text-primary/60">{new Date(work.created_at).toLocaleDateString()}</span>
                           </div>
                         </div>

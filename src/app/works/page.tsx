@@ -15,10 +15,10 @@ export default async function Works() {
   let d1Works: any[] = [];
   try {
     const db = getRequestContext().env.DB;
-    const { results } = await db.prepare('SELECT works.*, categories.name as category_name FROM works LEFT JOIN categories ON works.category = categories.id ORDER BY works.created_at DESC').all();
+    const { results } = await db.prepare('SELECT * FROM works ORDER BY created_at DESC').all();
     d1Works = results.map(w => ({
       src: w.image_data,
-      category: w.category_name || w.category,
+      category: w.category,
       title: `作品 #${w.id}`,
       date: w.created_at,
     }));
